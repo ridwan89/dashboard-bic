@@ -37,8 +37,9 @@
 
     .bus-container img {
       width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      /* Menghilangkan border-radius dan shadow */
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .sensor-dot {
@@ -87,13 +88,6 @@
     .info-content {
       flex-grow: 1;
       min-height: 200px;
-    }
-
-    .info-default {
-      color: #7f8c8d;
-      font-style: italic;
-      text-align: center;
-      margin-top: 50px;
     }
 
     .status-item {
@@ -145,7 +139,7 @@
 
   <div class="dashboard">
     <div class="bus-container">
-      <img src="bus.png" alt="Bus Diagram">
+      <img src="bus.png" alt="Diagram Bus">
 
       <!-- Titik sensor -->
       <div class="sensor-dot" style="top: 20%; left: 12%;" 
