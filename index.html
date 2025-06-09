@@ -37,7 +37,6 @@
 
     .bus-container img {
       width: 100%;
-      /* Menghilangkan border-radius dan shadow */
       border-radius: 0;
       box-shadow: none;
     }
@@ -119,17 +118,15 @@
       font-size: 1.2em;
     }
 
-    .alert {
-      color: #e74c3c;
-      font-weight: bold;
-    }
-
     .normal {
       color: #27ae60;
     }
-
     .warning {
       color: #f39c12;
+    }
+    .danger {
+      color: #e74c3c;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -149,7 +146,7 @@
       <div class="sensor-dot" style="top: 40%; left: 40%;" 
            onclick="showInfo('kursi', 'Kursi Penumpang', 'Jumlah: 18/28 Terisi (65%)')"></div>
       <div class="sensor-dot" style="top: 15%; left: 10%;" 
-           onclick="showInfo('fatigue', 'Kondisi Pengemudi', 'Status: Normal\nWaktu Mengemudi: 2 jam 15 menit')"></div>
+           onclick="showInfo('fatigue', 'Kondisi Pengemudi', 'Status: Normal & Fokus\nWaktu Mengemudi: 2 jam 15 menit')"></div>
       <div class="sensor-dot" style="top: 5%; left: 50%;" 
            onclick="showInfo('cuaca', 'Cuaca & Suhu', 'Kota Berikutnya: Jakarta\nKondisi: Cerah Berawan\nSuhu: 29°C\nSuhu Kabin: 24°C')"></div>
     </div>
@@ -172,7 +169,7 @@
         </div>
         <div class="status-item">
           <div class="status-title"><span class="status-icon">👨‍✈️</span> Pengemudi</div>
-          <div class="status-value normal">Status: Normal</div>
+          <div class="status-value normal">Status: Normal & Fokus<br>Waktu Mengemudi: 2 jam 15 menit</div>
         </div>
         <div class="status-item">
           <div class="status-title"><span class="status-icon">🌤️</span> Cuaca & Suhu</div>
@@ -183,6 +180,26 @@
   </div>
 
   <script>
+    // Data kondisi pengemudi
+    const driverConditions = [
+      {
+        status: "Normal & Fokus",
+        time: "2 jam 15 menit",
+        class: "normal"
+      },
+      {
+        status: "Istirahat Disarankan",
+        time: "4 jam 30 menit",
+        class: "warning"
+      },
+      {
+        status: "Istirahat Wajib",
+        time: "5 jam 10 menit",
+        class: "danger"
+      }
+    ];
+    let currentDriverCondition = 0;
+
     function showInfo(type, title, info) {
       // Reset semua titik sensor
       document.querySelectorAll('.sensor-dot').forEach(dot => {
@@ -206,25 +223,23 @@
           (type === 'cuaca' && itemType === '🌤️')
         ) {
           const valueElement = item.querySelector('.status-value');
-          valueElement.innerHTML = info.replace(/\n/g, '<br>');
           
-          // Warna status khusus untuk kondisi pengemudi
           if (type === 'fatigue') {
-            if (info.includes('Normal')) {
-              valueElement.className = 'status-value normal';
-            } else if (info.includes('Warning')) {
-              valueElement.className = 'status-value warning';
-            } else {
-              valueElement.className = 'status-value alert';
-            }
+            // Rotasi kondisi pengemudi setiap klik
+            currentDriverCondition = (currentDriverCondition + 1) % driverConditions.length;
+            const condition = driverConditions[currentDriverCondition];
+            valueElement.innerHTML = `Status: ${condition.status}<br>Waktu Mengemudi: ${condition.time}`;
+            valueElement.className = `status-value ${condition.class}`;
+          } else {
+            valueElement.innerHTML = info.replace(/\n/g, '<br>');
           }
         }
       });
     }
 
-    // Tampilkan informasi cuaca secara default saat pertama kali load
+    // Tampilkan informasi default saat pertama kali load
     window.onload = function() {
-      showInfo('cuaca', 'Cuaca & Suhu', 'Kota Berikutnya: Jakarta\nKondisi: Cerah Berawan\nSuhu: 29°C\nSuhu Kabin: 24°C');
+      showInfo('fatigue', 'Kondisi Pengemudi', 'Status: Normal & Fokus\nWaktu Mengemudi: 2 jam 15 menit');
     };
   </script>
 
