@@ -27,55 +27,8 @@
         
         .dashboard-container {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: 1fr;
             min-height: 100vh;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            background-color: var(--primary);
-            color: white;
-            padding: 20px;
-        }
-        
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .sidebar-header img {
-            width: 40px;
-            margin-right: 10px;
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .sidebar-menu li {
-            margin-bottom: 15px;
-        }
-        
-        .sidebar-menu a {
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: rgba(255,255,255,0.1);
-        }
-        
-        .sidebar-menu i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
         }
         
         /* Main Content */
@@ -144,30 +97,34 @@
         
         /* Main Content Layout - Diperbarui */
         .content-wrapper {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            flex-wrap: wrap;
         }
         
         .bus-section {
-            flex: 1;
-            min-width: 400px;
-            max-width: 600px;
+            grid-column: 1 / span 1;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .bus-visualization {
             position: relative;
             width: 100%;
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .bus-image {
-            width: 100%;
-            height: auto;
-            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
         
         .sensor-dot {
@@ -196,14 +153,11 @@
         
         /* Widgets Grid - Diperbarui */
         .widgets-section {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .widgets-grid {
+            grid-column: 2 / span 1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
+            align-content: start;
         }
         
         .widget {
@@ -355,27 +309,16 @@
         /* Responsive */
         @media (max-width: 1200px) {
             .content-wrapper {
-                flex-direction: column;
-            }
-            
-            .bus-section, .widgets-section {
-                min-width: 100%;
-                max-width: 100%;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .dashboard-container {
                 grid-template-columns: 1fr;
             }
             
-            .sidebar {
-                display: none;
+            .bus-section, .widgets-section {
+                grid-column: span 1;
             }
         }
         
         @media (max-width: 768px) {
-            .widgets-grid {
+            .widgets-section {
                 grid-template-columns: 1fr;
             }
             
@@ -395,23 +338,6 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <img src="https://via.placeholder.com/40" alt="Logo">
-                <h2>Bus Intelligence</h2>
-            </div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-bus"></i> Bus Monitoring</a></li>
-                <li><a href="#"><i class="fas fa-route"></i> Rute & Jadwal</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Penumpang</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Pengaturan</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Laporan</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Bantuan</a></li>
-            </ul>
-        </div>
-        
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
@@ -432,8 +358,9 @@
             <div class="content-wrapper">
                 <!-- Bagian Bus -->
                 <div class="bus-section">
+                    <h3>Visualisasi Bus</h3>
                     <div class="bus-visualization">
-                        <img src="bus.png" alt="Bus Diagram" class="bus-image">
+                        <img src="ChatGPT Image Jun 9, 2025, 06_57_31 PM.png" alt="Bus Diagram" class="bus-image">
                         
                         <!-- Sensor Points -->
                         <div class="sensor-dot" style="top: 20%; left: 12%;" onclick="showInfo('pintu-depan')"></div>
@@ -446,130 +373,128 @@
                 
                 <!-- Bagian Widgets -->
                 <div class="widgets-section">
-                    <div class="widgets-grid">
-                        <!-- Pintu Depan -->
-                        <div class="widget" id="pintu-depan-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Pintu Depan</h3>
-                                <i class="fas fa-door-open widget-icon"></i>
-                            </div>
-                            <div class="widget-value">Tertutup</div>
-                            <span class="widget-status status-normal">Aman</span>
-                            <p class="widget-description">Status pintu masuk penumpang utama</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 2 menit lalu</span>
-                                <button class="widget-button" onclick="toggleDoor('pintu-depan')">Kontrol</button>
-                            </div>
+                    <!-- Pintu Depan -->
+                    <div class="widget" id="pintu-depan-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Pintu Depan</h3>
+                            <i class="fas fa-door-open widget-icon"></i>
                         </div>
-                        
-                        <!-- Bagasi -->
-                        <div class="widget" id="bagasi-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Bagasi</h3>
-                                <i class="fas fa-suitcase widget-icon"></i>
-                            </div>
-                            <div class="widget-value">75%</div>
-                            <span class="widget-status status-normal">Tertutup</span>
-                            <p class="widget-description">Kapasitas dan status kompartemen bagasi</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 5 menit lalu</span>
-                                <button class="widget-button" onclick="toggleDoor('bagasi')">Kontrol</button>
-                            </div>
+                        <div class="widget-value">Tertutup</div>
+                        <span class="widget-status status-normal">Aman</span>
+                        <p class="widget-description">Status pintu masuk penumpang utama</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 2 menit lalu</span>
+                            <button class="widget-button" onclick="toggleDoor('pintu-depan')">Kontrol</button>
                         </div>
-                        
-                        <!-- Kursi -->
-                        <div class="widget" id="kursi-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Okupansi Kursi</h3>
-                                <i class="fas fa-chair widget-icon"></i>
-                            </div>
-                            <div class="widget-value">18/28</div>
-                            <span class="widget-status status-normal">65% Terisi</span>
-                            <p class="widget-description">Jumlah penumpang saat ini di kabin</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 1 menit lalu</span>
-                                <button class="widget-button" onclick="viewSeats()">Detail</button>
-                            </div>
+                    </div>
+                    
+                    <!-- Bagasi -->
+                    <div class="widget" id="bagasi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Bagasi</h3>
+                            <i class="fas fa-suitcase widget-icon"></i>
                         </div>
-                        
-                        <!-- Pengemudi -->
-                        <div class="widget" id="pengemudi-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Kondisi Pengemudi</h3>
-                                <i class="fas fa-user-shield widget-icon"></i>
-                            </div>
-                            <div class="widget-value">Normal</div>
-                            <span class="widget-status status-normal">Fokus</span>
-                            <p class="widget-description">Status kewaspadaan pengemudi</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 30 detik lalu</span>
-                                <button class="widget-button" onclick="checkDriver()">Periksa</button>
-                            </div>
+                        <div class="widget-value">75%</div>
+                        <span class="widget-status status-normal">Tertutup</span>
+                        <p class="widget-description">Kapasitas dan status kompartemen bagasi</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 5 menit lalu</span>
+                            <button class="widget-button" onclick="toggleDoor('bagasi')">Kontrol</button>
                         </div>
-                        
-                        <!-- Cuaca -->
-                        <div class="widget" id="cuaca-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Cuaca</h3>
-                                <i class="fas fa-cloud-sun widget-icon"></i>
-                            </div>
-                            <div class="widget-value">29°C</div>
-                            <span class="widget-status status-normal">Cerah Berawan</span>
-                            <p class="widget-description">Jakarta - Tujuan berikutnya</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 15 menit lalu</span>
-                                <button class="widget-button" onclick="refreshWeather()">Perbarui</button>
-                            </div>
+                    </div>
+                    
+                    <!-- Kursi -->
+                    <div class="widget" id="kursi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Okupansi Kursi</h3>
+                            <i class="fas fa-chair widget-icon"></i>
                         </div>
-                        
-                        <!-- Suhu Kabin -->
-                        <div class="widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Suhu Kabin</h3>
-                                <i class="fas fa-thermometer-half widget-icon"></i>
-                            </div>
-                            <div class="widget-value">24°C</div>
-                            <span class="widget-status status-normal">Nyaman</span>
-                            <p class="widget-description">Suhu rata-rata di dalam kabin</p>
-                            <div class="widget-footer">
-                                <span class="widget-time">Diperbarui 1 menit lalu</span>
-                                <button class="widget-button" onclick="adjustTemp()">Atur</button>
-                            </div>
+                        <div class="widget-value">18/28</div>
+                        <span class="widget-status status-normal">65% Terisi</span>
+                        <p class="widget-description">Jumlah penumpang saat ini di kabin</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 1 menit lalu</span>
+                            <button class="widget-button" onclick="viewSeats()">Detail</button>
                         </div>
-                        
-                        <!-- Notifikasi -->
-                        <div class="widget notifications-widget">
-                            <div class="widget-header">
-                                <h3 class="widget-title">Notifikasi Sistem</h3>
-                                <i class="fas fa-bell widget-icon"></i>
-                            </div>
-                            <ul class="notification-list">
-                                <li class="notification-item">
-                                    <div class="notification-message">
-                                        <span class="notification-priority priority-warning"></span>
-                                        Suhu kabin meningkat menjadi 26°C
-                                    </div>
-                                    <div class="notification-time">2 menit lalu</div>
-                                </li>
-                                <li class="notification-item">
-                                    <div class="notification-message">
-                                        <span class="notification-priority priority-normal"></span>
-                                        Pintu depan telah ditutup
-                                    </div>
-                                    <div class="notification-time">5 menit lalu</div>
-                                </li>
-                                <li class="notification-item">
-                                    <div class="notification-message">
-                                        <span class="notification-priority priority-danger"></span>
-                                        Peringatan: Pengemudi menunjukkan tanda kelelahan
-                                    </div>
-                                    <div class="notification-time">10 menit lalu</div>
-                                </li>
-                            </ul>
-                            <div class="widget-footer">
-                                <span class="widget-time">3 notifikasi baru</span>
-                                <button class="widget-button" onclick="viewAllNotifications()">Lihat Semua</button>
-                            </div>
+                    </div>
+                    
+                    <!-- Pengemudi -->
+                    <div class="widget" id="pengemudi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Kondisi Pengemudi</h3>
+                            <i class="fas fa-user-shield widget-icon"></i>
+                        </div>
+                        <div class="widget-value">Normal</div>
+                        <span class="widget-status status-normal">Fokus</span>
+                        <p class="widget-description">Status kewaspadaan pengemudi</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 30 detik lalu</span>
+                            <button class="widget-button" onclick="checkDriver()">Periksa</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cuaca -->
+                    <div class="widget" id="cuaca-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Cuaca</h3>
+                            <i class="fas fa-cloud-sun widget-icon"></i>
+                        </div>
+                        <div class="widget-value">29°C</div>
+                        <span class="widget-status status-normal">Cerah Berawan</span>
+                        <p class="widget-description">Jakarta - Tujuan berikutnya</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 15 menit lalu</span>
+                            <button class="widget-button" onclick="refreshWeather()">Perbarui</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Suhu Kabin -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Suhu Kabin</h3>
+                            <i class="fas fa-thermometer-half widget-icon"></i>
+                        </div>
+                        <div class="widget-value">24°C</div>
+                        <span class="widget-status status-normal">Nyaman</span>
+                        <p class="widget-description">Suhu rata-rata di dalam kabin</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 1 menit lalu</span>
+                            <button class="widget-button" onclick="adjustTemp()">Atur</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifikasi -->
+                    <div class="widget notifications-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Notifikasi Sistem</h3>
+                            <i class="fas fa-bell widget-icon"></i>
+                        </div>
+                        <ul class="notification-list">
+                            <li class="notification-item">
+                                <div class="notification-message">
+                                    <span class="notification-priority priority-warning"></span>
+                                    Suhu kabin meningkat menjadi 26°C
+                                </div>
+                                <div class="notification-time">2 menit lalu</div>
+                            </li>
+                            <li class="notification-item">
+                                <div class="notification-message">
+                                    <span class="notification-priority priority-normal"></span>
+                                    Pintu depan telah ditutup
+                                </div>
+                                <div class="notification-time">5 menit lalu</div>
+                            </li>
+                            <li class="notification-item">
+                                <div class="notification-message">
+                                    <span class="notification-priority priority-danger"></span>
+                                    Peringatan: Pengemudi menunjukkan tanda kelelahan
+                                </div>
+                                <div class="notification-time">10 menit lalu</div>
+                            </li>
+                        </ul>
+                        <div class="widget-footer">
+                            <span class="widget-time">3 notifikasi baru</span>
+                            <button class="widget-button" onclick="viewAllNotifications()">Lihat Semua</button>
                         </div>
                     </div>
                 </div>
