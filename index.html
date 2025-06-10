@@ -15,6 +15,7 @@
             --info: #3498db;
             --light: #ecf0f1;
             --dark: #2c3e50;
+            --gray-dark: #5D6D7E;
         }
         
         body {
@@ -77,24 +78,6 @@
             font-size: 10px;
         }
         
-        .user-profile {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
         /* Main Content Layout - Diperbarui */
         .content-wrapper {
             display: grid;
@@ -110,6 +93,10 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
+            resize: both;
+            overflow: auto;
+            min-width: 300px;
+            min-height: 300px;
         }
         
         .bus-visualization {
@@ -165,6 +152,10 @@
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            resize: both;
+            overflow: auto;
+            min-width: 150px;
+            min-height: 180px;
         }
         
         .widget-header {
@@ -220,6 +211,11 @@
             color: var(--info);
         }
         
+        .status-gray {
+            background-color: rgba(93, 109, 126, 0.1);
+            color: var(--gray-dark);
+        }
+        
         .widget-description {
             font-size: 13px;
             color: #7f8c8d;
@@ -253,57 +249,20 @@
             background-color: #2980b9;
         }
         
-        /* Notifications Widget */
-        .notifications-widget {
-            grid-column: span 2;
-        }
-        
-        .notification-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .notification-item {
-            padding: 8px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-        
-        .notification-message {
+        /* Bagian Kapasitas Bagasi */
+        .bagasi-info {
             display: flex;
-            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
         
-        .notification-priority {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-            flex-shrink: 0;
+        .bagasi-capacity {
+            flex: 1;
         }
         
-        .priority-normal {
-            background-color: var(--success);
-        }
-        
-        .priority-warning {
-            background-color: var(--warning);
-        }
-        
-        .priority-danger {
-            background-color: var(--danger);
-        }
-        
-        .notification-time {
-            font-size: 11px;
-            color: #95a5a6;
-            margin-left: 16px;
+        .bagasi-door {
+            flex: 1;
+            text-align: right;
         }
         
         /* Responsive */
@@ -329,10 +288,6 @@
             .widget {
                 padding: 12px;
             }
-            
-            .notifications-widget {
-                grid-column: span 1;
-            }
         }
     </style>
 </head>
@@ -347,10 +302,6 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </div>
-                    <div class="user-profile">
-                        <div class="user-avatar">DA</div>
-                        <span>Driver A</span>
-                    </div>
                 </div>
             </div>
             
@@ -358,16 +309,16 @@
             <div class="content-wrapper">
                 <!-- Bagian Bus -->
                 <div class="bus-section">
-                    <h3>Visualisasi Bus</h3>
                     <div class="bus-visualization">
                         <img src="bus.png" alt="Bus Diagram" class="bus-image">
                         
                         <!-- Sensor Points -->
-                        <div class="sensor-dot" style="top: 20%; left: 12%;" onclick="showInfo('pintu-depan')"></div>
-                        <div class="sensor-dot" style="top: 60%; left: 30%;" onclick="showInfo('bagasi')"></div>
-                        <div class="sensor-dot" style="top: 40%; left: 40%;" onclick="showInfo('kursi')"></div>
-                        <div class="sensor-dot" style="top: 15%; left: 10%;" onclick="showInfo('pengemudi')"></div>
-                        <div class="sensor-dot" style="top: 5%; left: 50%;" onclick="showInfo('cuaca')"></div>
+                        <div class="sensor-dot" style="top: 68%; left: 36%;" onclick="showInfo('pintu-depan')"></div>
+                        <div class="sensor-dot" style="top: 58%; left: 65%;" onclick="showInfo('bagasi')"></div>
+                        <div class="sensor-dot" style="top: 37%; left: 63%;" onclick="showInfo('kursi')"></div>
+                        <div class="sensor-dot" style="top: 47%; left: 22%;" onclick="showInfo('pengemudi')"></div>
+                        <div class="sensor-dot" style="top: 15%; left: 16%;" onclick="showInfo('cuaca')"></div>
+                        <div class="sensor-dot" style="top: 30%; left: 70%;" onclick="showInfo('suhu')"></div>
                     </div>
                 </div>
                 
@@ -394,12 +345,20 @@
                             <h3 class="widget-title">Bagasi</h3>
                             <i class="fas fa-suitcase widget-icon"></i>
                         </div>
-                        <div class="widget-value">75%</div>
-                        <span class="widget-status status-normal">Tertutup</span>
+                        <div class="bagasi-info">
+                            <div class="bagasi-capacity">
+                                <div class="widget-value">75%</div>
+                                <span class="widget-status status-warning">Terisi</span>
+                            </div>
+                            <div class="bagasi-door">
+                                <div class="widget-value">Tertutup</div>
+                                <span class="widget-status status-normal">Aman</span>
+                            </div>
+                        </div>
                         <p class="widget-description">Kapasitas dan status kompartemen bagasi</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 5 menit lalu</span>
-                            <button class="widget-button" onclick="toggleDoor('bagasi')">Kontrol</button>
+                            <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
                         </div>
                     </div>
                     
@@ -409,8 +368,8 @@
                             <h3 class="widget-title">Okupansi Kursi</h3>
                             <i class="fas fa-chair widget-icon"></i>
                         </div>
-                        <div class="widget-value">18/28</div>
-                        <span class="widget-status status-normal">65% Terisi</span>
+                        <div class="widget-value">32/50</div>
+                        <span class="widget-status status-normal">64% Terisi</span>
                         <p class="widget-description">Jumlah penumpang saat ini di kabin</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 1 menit lalu</span>
@@ -449,7 +408,7 @@
                     </div>
                     
                     <!-- Suhu Kabin -->
-                    <div class="widget">
+                    <div class="widget" id="suhu-widget">
                         <div class="widget-header">
                             <h3 class="widget-title">Suhu Kabin</h3>
                             <i class="fas fa-thermometer-half widget-icon"></i>
@@ -460,41 +419,6 @@
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 1 menit lalu</span>
                             <button class="widget-button" onclick="adjustTemp()">Atur</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Notifikasi -->
-                    <div class="widget notifications-widget">
-                        <div class="widget-header">
-                            <h3 class="widget-title">Notifikasi Sistem</h3>
-                            <i class="fas fa-bell widget-icon"></i>
-                        </div>
-                        <ul class="notification-list">
-                            <li class="notification-item">
-                                <div class="notification-message">
-                                    <span class="notification-priority priority-warning"></span>
-                                    Suhu kabin meningkat menjadi 26°C
-                                </div>
-                                <div class="notification-time">2 menit lalu</div>
-                            </li>
-                            <li class="notification-item">
-                                <div class="notification-message">
-                                    <span class="notification-priority priority-normal"></span>
-                                    Pintu depan telah ditutup
-                                </div>
-                                <div class="notification-time">5 menit lalu</div>
-                            </li>
-                            <li class="notification-item">
-                                <div class="notification-message">
-                                    <span class="notification-priority priority-danger"></span>
-                                    Peringatan: Pengemudi menunjukkan tanda kelelahan
-                                </div>
-                                <div class="notification-time">10 menit lalu</div>
-                            </li>
-                        </ul>
-                        <div class="widget-footer">
-                            <span class="widget-time">3 notifikasi baru</span>
-                            <button class="widget-button" onclick="viewAllNotifications()">Lihat Semua</button>
                         </div>
                     </div>
                 </div>
@@ -534,16 +458,40 @@
                 const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                if (valueElement.innerText === 'Tertutup' || valueElement.innerText === '75%') {
-                    valueElement.innerText = type === 'pintu-depan' ? 'Terbuka' : '100%';
-                    statusElement.innerText = type === 'pintu-depan' ? 'Terbuka!' : 'Penuh';
+                if (valueElement.innerText === 'Tertutup') {
+                    valueElement.innerText = 'Terbuka';
+                    statusElement.innerText = 'Terbuka!';
                     statusElement.className = 'widget-status status-warning';
-                    addNotification(`${type === 'pintu-depan' ? 'Pintu depan' : 'Bagasi'} telah dibuka`, 'warning');
+                    addNotification(`Pintu depan telah dibuka`, 'warning');
                 } else {
-                    valueElement.innerText = type === 'pintu-depan' ? 'Tertutup' : '75%';
-                    statusElement.innerText = type === 'pintu-depan' ? 'Aman' : 'Tertutup';
+                    valueElement.innerText = 'Tertutup';
+                    statusElement.innerText = 'Aman';
                     statusElement.className = 'widget-status status-normal';
-                    addNotification(`${type === 'pintu-depan' ? 'Pintu depan' : 'Bagasi'} telah ditutup`, 'normal');
+                    addNotification(`Pintu depan telah ditutup`, 'normal');
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
+        // Fungsi untuk toggle bagasi
+        function toggleBagasi() {
+            const widget = document.getElementById('bagasi-widget');
+            if (widget) {
+                const doorValue = widget.querySelector('.bagasi-door .widget-value');
+                const doorStatus = widget.querySelector('.bagasi-door .widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                if (doorValue.innerText === 'Tertutup') {
+                    doorValue.innerText = 'Terbuka';
+                    doorStatus.innerText = 'Terbuka!';
+                    doorStatus.className = 'widget-status status-warning';
+                    addNotification('Bagasi telah dibuka', 'warning');
+                } else {
+                    doorValue.innerText = 'Tertutup';
+                    doorStatus.innerText = 'Aman';
+                    doorStatus.className = 'widget-status status-normal';
+                    addNotification('Bagasi telah ditutup', 'normal');
                 }
                 
                 timeElement.innerText = 'Diperbarui baru saja';
@@ -589,52 +537,59 @@
                 const descElement = widget.querySelector('.widget-description');
                 
                 const weatherData = [
-                    { temp: '29°C', status: 'Cerah Berawan', city: 'Jakarta' },
-                    { temp: '27°C', status: 'Berawan', city: 'Bandung' },
-                    { temp: '31°C', status: 'Cerah', city: 'Semarang' },
-                    { temp: '25°C', status: 'Hujan Ringan', city: 'Bogor' }
+                    { temp: '29°C', status: 'Cerah', class: 'status-normal' },
+                    { temp: '27°C', status: 'Cerah Berawan', class: 'status-normal' },
+                    { temp: '25°C', status: 'Berawan', class: 'status-gray' },
+                    { temp: '23°C', status: 'Mendung', class: 'status-gray' },
+                    { temp: '22°C', status: 'Gerimis', class: 'status-gray' },
+                    { temp: '21°C', status: 'Hujan Ringan', class: 'status-gray' },
+                    { temp: '20°C', status: 'Hujan Sedang', class: 'status-danger' },
+                    { temp: '19°C', status: 'Hujan Lebat', class: 'status-danger' },
+                    { temp: '18°C', status: 'Badai Petir', class: 'status-danger' },
+                    { temp: '17°C', status: 'Kabut', class: 'status-danger' }
                 ];
                 
                 const randomWeather = weatherData[Math.floor(Math.random() * weatherData.length)];
                 
                 valueElement.innerText = randomWeather.temp;
                 statusElement.innerText = randomWeather.status;
-                descElement.innerText = `${randomWeather.city} - Tujuan berikutnya`;
+                statusElement.className = `widget-status ${randomWeather.class}`;
+                descElement.innerText = 'Jakarta - Tujuan berikutnya';
                 timeElement.innerText = 'Diperbarui baru saja';
                 
-                addNotification(`Cuaca diperbarui: ${randomWeather.city} ${randomWeather.temp} ${randomWeather.status}`, 'normal');
+                addNotification(`Cuaca diperbarui: ${randomWeather.temp} ${randomWeather.status}`, 'normal');
+            }
+        }
+        
+        // Fungsi untuk memperbarui suhu kabin
+        function updateSuhu(suhu) {
+            const widget = document.getElementById('suhu-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                valueElement.innerText = `${suhu}°C`;
+                
+                if (suhu < 20) {
+                    statusElement.innerText = 'Sangat Dingin';
+                    statusElement.className = 'widget-status status-info';
+                } else if (suhu >= 20 && suhu <= 25) {
+                    statusElement.innerText = 'Nyaman';
+                    statusElement.className = 'widget-status status-normal';
+                } else {
+                    statusElement.innerText = 'Panas';
+                    statusElement.className = 'widget-status status-warning';
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
             }
         }
         
         // Fungsi untuk menambahkan notifikasi
         function addNotification(message, priority) {
-            const notificationList = document.querySelector('.notification-list');
-            const notificationItem = document.createElement('li');
-            notificationItem.className = 'notification-item';
-            
-            const priorityClass = `priority-${priority}`;
-            
-            notificationItem.innerHTML = `
-                <div class="notification-message">
-                    <span class="notification-priority ${priorityClass}"></span>
-                    ${message}
-                </div>
-                <div class="notification-time">baru saja</div>
-            `;
-            
-            notificationList.insertBefore(notificationItem, notificationList.firstChild);
-            
-            // Hapus notifikasi lama jika lebih dari 3
-            while (notificationList.children.length > 3) {
-                notificationList.removeChild(notificationList.lastChild);
-            }
-            
-            // Perbarui badge notifikasi
-            const notificationBadge = document.querySelector('.notification-badge');
-            if (priority === 'warning' || priority === 'danger') {
-                let currentCount = parseInt(notificationBadge.innerText);
-                notificationBadge.innerText = currentCount + 1;
-            }
+            // Di sini bisa ditambahkan kode untuk notifikasi jika diperlukan
+            console.log(`[${priority}] ${message}`);
         }
         
         // Fungsi placeholder untuk tindakan lainnya
@@ -643,11 +598,10 @@
         }
         
         function adjustTemp() {
-            addNotification('Membuka panel pengaturan suhu', 'normal');
-        }
-        
-        function viewAllNotifications() {
-            addNotification('Membuka semua notifikasi', 'normal');
+            // Generate random temperature between 15 and 30
+            const randomTemp = Math.floor(Math.random() * 16) + 15;
+            updateSuhu(randomTemp);
+            addNotification('Mengatur suhu kabin', 'normal');
         }
         
         // Inisialisasi
@@ -655,6 +609,16 @@
             // Tambahkan notifikasi awal
             addNotification('Sistem bus #KB001 siap digunakan', 'normal');
             addNotification('Pemeriksaan awal selesai, semua sistem normal', 'normal');
+            
+            // Set interval untuk perubahan suhu acak (simulasi)
+            setInterval(() => {
+                const currentTemp = parseInt(document.getElementById('suhu-widget').querySelector('.widget-value').innerText);
+                const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+                const newTemp = Math.max(15, Math.min(30, currentTemp + change));
+                if (newTemp !== currentTemp) {
+                    updateSuhu(newTemp);
+                }
+            }, 10000);
         });
     </script>
 </body>
