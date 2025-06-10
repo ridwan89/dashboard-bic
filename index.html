@@ -252,6 +252,26 @@
                 padding: 12px;
             }
         }
+        
+        .fullscreen-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-right: 20px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .fullscreen-button:hover {
+            transform: scale(1.1);
+            color: var(--secondary);
+        }
+        
+        .fullscreen-button i {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -261,6 +281,10 @@
             <div class="header">
                 <h1>Dashboard Bus #KB001</h1>
                 <div class="user-menu">
+                    <!-- Tombol Fullscreen Baru -->
+                    <button id="fullscreen-btn" class="fullscreen-button" title="Toggle Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
                     <div class="notification-bell">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
@@ -634,6 +658,39 @@
                 document.querySelector('.bus-map-section .widget-time').innerText = 'Diperbarui baru saja';
             }, 10000);
         }
+
+        // Fungsi toggle fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        // Update icon berdasarkan state fullscreen
+        function updateFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                fullscreenBtn.title = 'Exit Fullscreen';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                fullscreenBtn.title = 'Enter Fullscreen';
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+        });
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
