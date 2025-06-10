@@ -7,9 +7,210 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        /* ... (CSS sebelumnya tetap sama) ... */
-
-        /* Bagian Kapasitas Bagasi - Diperbarui */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray-dark: #5D6D7E;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 24px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-bell {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        /* Main Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .bus-map-section {
+            grid-column: 1 / span 1;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            min-width: 300px;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        /* Widgets Grid */
+        .widgets-section {
+            grid-column: 2 / span 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-content: start;
+        }
+        
+        .widget {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            min-width: 10px;
+            min-height: 180px;
+            position: relative;
+        }
+        
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .widget-title {
+            margin: 0;
+            font-size: 16px;
+            color: var(--primary);
+        }
+        
+        .widget-icon {
+            font-size: 18px;
+            color: var(--secondary);
+        }
+        
+        .widget-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 8px 0;
+            color: var(--primary);
+        }
+        
+        .widget-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .status-normal {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+        
+        .status-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--info);
+        }
+        
+        .status-gray {
+            background-color: rgba(93, 109, 126, 0.1);
+            color: var(--gray-dark);
+        }
+        
+        .widget-description {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 8px;
+        }
+        
+        .widget-footer {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .widget-time {
+            font-size: 11px;
+            color: #95a5a6;
+        }
+        
+        .widget-button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+        
+        .widget-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Bagian Kapasitas Bagasi */
         .bagasi-info {
             display: table;
             width: 100%;
@@ -24,7 +225,7 @@
             display: table-cell;
             padding: 4px 0;
             text-align: left;
-            font-size: 13px; /* Ukuran teks disamakan dengan widget lain */
+            font-size: 13px;
         }
         
         .bagasi-label {
@@ -32,39 +233,342 @@
             width: 50%;
         }
         
-        /* ... (CSS lainnya tetap sama) ... */
+        /* Map Widget */
+        .map-widget {
+            height: 100%;
+        }
+        
+        #map {
+            height: 94%;
+            width: 100%;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .bus-map-section, .widgets-section {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .widgets-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .widget {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- ... (Bagian HTML sebelumnya tetap sama) ... -->
-    
-    <!-- Bagasi Widget - Diperbarui -->
-    <div class="widget" id="bagasi-widget">
-        <div class="widget-header">
-            <h3 class="widget-title">Bagasi</h3>
-            <i class="fas fa-suitcase widget-icon"></i>
-        </div>
-        <div class="bagasi-info">
-            <div class="bagasi-row">
-                <div class="bagasi-label">Kapasitas</div>
-                <div class="bagasi-value">75% <span class="widget-status status-warning">Terisi</span></div>
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Dashboard Bus #KB001</h1>
+                <div class="user-menu">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
             </div>
-            <div class="bagasi-row">
-                <div class="bagasi-label">Pintu Bagasi</div>
-                <div class="bagasi-value">Tertutup <span class="widget-status status-normal">Aman</span></div>
+            
+            <!-- Konten Utama -->
+            <div class="content-wrapper">
+                <!-- Bagian Bus dengan Map -->
+                <div class="bus-map-section">
+                    <div class="map-widget">
+                        <div id="map"></div>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 10 detik lalu</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bagian Widgets -->
+                <div class="widgets-section">
+                    <!-- Pintu Depan -->
+                    <div class="widget" id="pintu-depan-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Pintu Depan</h3>
+                            <i class="fas fa-door-open widget-icon"></i>
+                        </div>
+                        <div class="widget-value">Tertutup</div>
+                        <span class="widget-status status-normal">Aman</span>
+                        <p class="widget-description">Status pintu masuk penumpang utama</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 2 menit lalu</span>
+                            <button class="widget-button" onclick="toggleDoor('pintu-depan')">Kontrol</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Bagasi -->
+                    <div class="widget" id="bagasi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Bagasi</h3>
+                            <i class="fas fa-suitcase widget-icon"></i>
+                        </div>
+                        <div class="bagasi-info">
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Kapasitas</div>
+                                <div class="bagasi-value">75% <span class="widget-status status-warning">Terisi</span></div>
+                            </div>
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Pintu Bagasi</div>
+                                <div class="bagasi-value">Tertutup <span class="widget-status status-normal">Aman</span></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 5 menit lalu</span>
+                            <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Kursi -->
+                    <div class="widget" id="kursi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Okupansi Kursi</h3>
+                            <i class="fas fa-chair widget-icon"></i>
+                        </div>
+                        <div class="widget-value">32/50</div>
+                        <span class="widget-status status-normal">64% Terisi</span>
+                        <p class="widget-description">Jumlah penumpang saat ini di kabin</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 1 menit lalu</span>
+                            <button class="widget-button" onclick="viewSeats()">Detail</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Pengemudi -->
+                    <div class="widget" id="pengemudi-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Kondisi Pengemudi</h3>
+                            <i class="fas fa-user-shield widget-icon"></i>
+                        </div>
+                        <div class="widget-value">Normal</div>
+                        <span class="widget-status status-normal">Fokus</span>
+                        <p class="widget-description">Status kewaspadaan pengemudi</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 30 detik lalu</span>
+                            <button class="widget-button" onclick="checkDriver()">Periksa</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cuaca -->
+                    <div class="widget" id="cuaca-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Cuaca</h3>
+                            <i class="fas fa-cloud-sun widget-icon"></i>
+                        </div>
+                        <div class="widget-value">29°C</div>
+                        <span class="widget-status status-normal">Cerah Berawan</span>
+                        <p class="widget-description">Jakarta</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 15 menit lalu</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Suhu Kabin -->
+                    <div class="widget" id="suhu-widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Suhu Kabin</h3>
+                            <i class="fas fa-thermometer-half widget-icon"></i>
+                        </div>
+                        <div class="widget-value">24°C</div>
+                        <span class="widget-status status-normal">Nyaman</span>
+                        <p class="widget-description">Suhu rata-rata di dalam kabin</p>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 1 menit lalu</span>
+                            <button class="widget-button" onclick="adjustTemp()">Atur</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="widget-footer">
-            <span class="widget-time">Diperbarui 5 menit lalu</span>
-            <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
         </div>
     </div>
 
-    <!-- ... (Bagian HTML lainnya tetap sama) ... -->
-
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // ... (Fungsi JavaScript sebelumnya tetap sama) ...
-
+        // Daftar kota untuk cuaca
+        const kotaList = [
+            "Jakarta", "Bandung", "Semarang", "Cirebon", "Surabaya", 
+            "Malang", "Sidoarjo", "Purwakarta", "Krawang", "Bogor", 
+            "Depok", "Tangerang", "Banten"
+        ];
+        
+        // Fungsi untuk toggle pintu/bagasi
+        function toggleDoor(type) {
+            const widget = document.getElementById(`${type}-widget`);
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                if (valueElement.innerText === 'Tertutup') {
+                    valueElement.innerText = 'Terbuka';
+                    statusElement.innerText = 'Terbuka!';
+                    statusElement.className = 'widget-status status-warning';
+                    addNotification(`Pintu depan telah dibuka`, 'warning');
+                } else {
+                    valueElement.innerText = 'Tertutup';
+                    statusElement.innerText = 'Aman';
+                    statusElement.className = 'widget-status status-normal';
+                    addNotification(`Pintu depan telah ditutup`, 'normal');
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
+        // Fungsi untuk toggle bagasi
+        function toggleBagasi() {
+            const widget = document.getElementById('bagasi-widget');
+            if (widget) {
+                const doorValue = widget.querySelector('.bagasi-info .bagasi-value:last-child');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                if (doorValue.innerText.includes('Tertutup')) {
+                    doorValue.innerHTML = 'Terbuka <span class="widget-status status-warning">Terbuka!</span>';
+                    addNotification('Bagasi telah dibuka', 'warning');
+                } else {
+                    doorValue.innerHTML = 'Tertutup <span class="widget-status status-normal">Aman</span>';
+                    addNotification('Bagasi telah ditutup', 'normal');
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
+        // Fungsi untuk memeriksa kondisi pengemudi
+        function checkDriver() {
+            const widget = document.getElementById('pengemudi-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                const conditions = [
+                    { value: 'Normal', status: 'Fokus', class: 'status-normal' },
+                    { value: 'Waspada', status: 'Istirahat Disarankan', class: 'status-warning' },
+                    { value: 'Bahaya', status: 'Istirahat Wajib!', class: 'status-danger' }
+                ];
+                
+                const currentIndex = conditions.findIndex(cond => cond.value === valueElement.innerText);
+                const nextIndex = (currentIndex + 1) % conditions.length;
+                const nextCondition = conditions[nextIndex];
+                
+                valueElement.innerText = nextCondition.value;
+                statusElement.innerText = nextCondition.status;
+                statusElement.className = `widget-status ${nextCondition.class}`;
+                timeElement.innerText = 'Diperbarui baru saja';
+                
+                if (nextCondition.class !== 'status-normal') {
+                    addNotification(`Kondisi pengemudi: ${nextCondition.status}`, nextCondition.class.replace('status-', ''));
+                }
+            }
+        }
+        
+        // Fungsi untuk memperbarui cuaca
+        function updateWeather() {
+            const widget = document.getElementById('cuaca-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const descElement = widget.querySelector('.widget-description');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                // Pilih kota secara acak
+                const randomKota = kotaList[Math.floor(Math.random() * kotaList.length)];
+                
+                const weatherData = [
+                    { temp: `${Math.floor(Math.random() * 10) + 25}°C`, status: 'Cerah', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 22}°C`, status: 'Cerah Berawan', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 20}°C`, status: 'Berawan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 5) + 18}°C`, status: 'Mendung', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 17}°C`, status: 'Gerimis', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 16}°C`, status: 'Hujan Ringan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 15}°C`, status: 'Hujan Sedang', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 14}°C`, status: 'Hujan Lebat', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 13}°C`, status: 'Badai Petir', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 12}°C`, status: 'Kabut', class: 'status-danger' }
+                ];
+                
+                const randomWeather = weatherData[Math.floor(Math.random() * weatherData.length)];
+                
+                valueElement.innerText = randomWeather.temp;
+                statusElement.innerText = randomWeather.status;
+                statusElement.className = `widget-status ${randomWeather.class}`;
+                descElement.innerText = randomKota;
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
+        // Fungsi untuk memperbarui suhu kabin
+        function updateSuhu(suhu) {
+            const widget = document.getElementById('suhu-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                valueElement.innerText = `${suhu}°C`;
+                
+                if (suhu < 20) {
+                    statusElement.innerText = 'Sangat Dingin';
+                    statusElement.className = 'widget-status status-info';
+                } else if (suhu >= 20 && suhu <= 25) {
+                    statusElement.innerText = 'Nyaman';
+                    statusElement.className = 'widget-status status-normal';
+                } else {
+                    statusElement.innerText = 'Panas';
+                    statusElement.className = 'widget-status status-warning';
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
+        // Fungsi untuk update kursi secara random
+        function updateSeatStatus() {
+            const widget = document.getElementById('kursi-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                const totalSeats = 50;
+                const occupied = Math.floor(Math.random() * (totalSeats + 1));
+                const percentage = Math.round((occupied / totalSeats) * 100);
+                
+                valueElement.innerText = `${occupied}/${totalSeats}`;
+                
+                if (percentage < 50) {
+                    statusElement.innerText = `${percentage}% Terisi`;
+                    statusElement.className = 'widget-status status-normal';
+                } else if (percentage >= 50 && percentage < 90) {
+                    statusElement.innerText = `${percentage}% Terisi`;
+                    statusElement.className = 'widget-status status-gray';
+                } else {
+                    statusElement.innerText = `${percentage}% Penuh`;
+                    statusElement.className = 'widget-status status-danger';
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+        
         // Fungsi untuk update status bagasi secara berkala
         function updateBagasiStatus() {
             const widget = document.getElementById('bagasi-widget');
@@ -103,18 +607,97 @@
                 timeElement.innerText = 'Diperbarui baru saja';
             }
         }
-
+        
+        // Fungsi untuk menambahkan notifikasi
+        function addNotification(message, priority) {
+            console.log(`[${priority}] ${message}`);
+        }
+        
+        // Fungsi placeholder untuk tindakan lainnya
+        function viewSeats() {
+            addNotification('Membuka detail okupansi kursi', 'normal');
+        }
+        
+        function adjustTemp() {
+            const randomTemp = Math.floor(Math.random() * 16) + 15;
+            updateSuhu(randomTemp);
+            addNotification('Mengatur suhu kabin', 'normal');
+        }
+        
+        // Initialize map with gray theme
+        function initMap() {
+            // Default coordinates (Jakarta)
+            const defaultLat = -6.2088;
+            const defaultLng = 106.8456;
+            
+            const map = L.map('map').setView([defaultLat, defaultLng], 13);
+            
+            // Gray theme map tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add bus marker
+            const busIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/128/8059/8059045.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+            });
+            
+            const marker = L.marker([defaultLat, defaultLng], {icon: busIcon}).addTo(map);
+            marker.bindPopup("<b>Bus #KB001</b><br>Status: Beroperasi").openPopup();
+            
+            // Simulate bus movement
+            setInterval(() => {
+                const currentLat = marker.getLatLng().lat;
+                const currentLng = marker.getLatLng().lng;
+                
+                // Move slightly in a random direction
+                const newLat = currentLat + (Math.random() * 0.01 - 0.005);
+                const newLng = currentLng + (Math.random() * 0.01 - 0.005);
+                
+                marker.setLatLng([newLat, newLng]);
+                map.panTo([newLat, newLng]);
+                
+                // Update time
+                document.querySelector('.bus-map-section .widget-time').innerText = 'Diperbarui baru saja';
+            }, 10000);
+        }
+        
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
-            // ... (Inisialisasi sebelumnya tetap sama) ...
+            // Tambahkan notifikasi awal
+            addNotification('Sistem bus #KB001 siap digunakan', 'normal');
+            addNotification('Pemeriksaan awal selesai, semua sistem normal', 'normal');
+            
+            // Set interval untuk perubahan suhu acak (simulasi)
+            setInterval(() => {
+                const currentTemp = parseInt(document.getElementById('suhu-widget').querySelector('.widget-value').innerText);
+                const change = Math.floor(Math.random() * 3) - 1;
+                const newTemp = Math.max(15, Math.min(30, currentTemp + change));
+                if (newTemp !== currentTemp) {
+                    updateSuhu(newTemp);
+                }
+            }, 10000);
+            
+            // Set interval untuk update kursi setiap 60 detik
+            setInterval(updateSeatStatus, 60000);
+            
+            // Set interval untuk update cuaca setiap 10 detik
+            setInterval(updateWeather, 10000);
             
             // Set interval untuk update bagasi setiap 15 detik
             setInterval(updateBagasiStatus, 15000);
             
             // Jalankan sekali saat pertama kali load
+            updateWeather();
+            updateSeatStatus();
             updateBagasiStatus();
             
-            // ... (Inisialisasi lainnya tetap sama) ...
+            // Initialize map
+            initMap();
         });
     </script>
 </body>
