@@ -86,7 +86,7 @@
             gap: 20px;
         }
         
-        .bus-section {
+        .bus-map-section {
             grid-column: 1 / span 1;
             background-color: white;
             padding: 15px;
@@ -97,46 +97,11 @@
             overflow: auto;
             min-width: 300px;
             height: calc(3 * (180px + 15px)); /* Height of 3 widgets with gap */
-        }
-        
-        .bus-visualization {
+            background-image: url('bus.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
             position: relative;
-            width: 100%;
-            height: 100%;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .bus-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        
-        .sensor-dot {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background-color: var(--secondary);
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 0 6px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        
-        .sensor-dot:hover {
-            transform: scale(1.3);
-            background-color: #2980b9;
-        }
-        
-        .sensor-dot.active {
-            background-color: var(--danger);
-            transform: scale(1.3);
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
         }
         
         /* Widgets Grid - Diperbarui */
@@ -278,6 +243,7 @@
             height: 100%;
             width: 100%;
             border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.8);
         }
         
         /* Responsive */
@@ -286,7 +252,7 @@
                 grid-template-columns: 1fr;
             }
             
-            .bus-section, .widgets-section {
+            .bus-map-section, .widgets-section {
                 grid-column: span 1;
             }
         }
@@ -322,17 +288,14 @@
             
             <!-- Konten Utama - Diperbarui -->
             <div class="content-wrapper">
-                <!-- Bagian Bus -->
-                <div class="bus-section">
-                    <div class="bus-visualization">
-                        <img src="bus.png" alt="Bus Diagram" class="bus-image">
-                        
-                        <!-- Sensor Points -->
-                        <div class="sensor-dot" style="top: 68%; left: 36%;" onclick="showInfo('pintu-depan')"></div>
-                        <div class="sensor-dot" style="top: 58%; left: 65%;" onclick="showInfo('bagasi')"></div>
-                        <div class="sensor-dot" style="top: 37%; left: 63%;" onclick="showInfo('kursi')"></div>
-                        <div class="sensor-dot" style="top: 47%; left: 22%;" onclick="showInfo('pengemudi')"></div>
-                        <div class="sensor-dot" style="top: 30%; left: 70%;" onclick="showInfo('suhu')"></div>
+                <!-- Bagian Bus dengan Map -->
+                <div class="bus-map-section">
+                    <div class="map-widget">
+                        <div id="map"></div>
+                        <div class="widget-footer">
+                            <span class="widget-time">Diperbarui 10 detik lalu</span>
+                            <button class="widget-button" onclick="refreshMap()">Perbarui</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -433,19 +396,6 @@
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 1 menit lalu</span>
                             <button class="widget-button" onclick="adjustTemp()">Atur</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Map Widget -->
-                    <div class="widget map-widget" id="map-widget">
-                        <div class="widget-header">
-                            <h3 class="widget-title">Lokasi Bus</h3>
-                            <i class="fas fa-map-marker-alt widget-icon"></i>
-                        </div>
-                        <div id="map"></div>
-                        <div class="widget-footer">
-                            <span class="widget-time">Diperbarui 10 detik lalu</span>
-                            <button class="widget-button" onclick="refreshMap()">Perbarui</button>
                         </div>
                     </div>
                 </div>
@@ -800,7 +750,7 @@
             
             // Add bus marker
             const busIcon = L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2251/2251878.png',
+                iconUrl: 'https://cdn-icons-png.flaticon.com/128/8059/8059045.png',
                 iconSize: [32, 32],
                 iconAnchor: [16, 16]
             });
@@ -821,13 +771,13 @@
                 map.panTo([newLat, newLng]);
                 
                 // Update time
-                document.querySelector('#map-widget .widget-time').innerText = 'Diperbarui baru saja';
+                document.querySelector('.bus-map-section .widget-time').innerText = 'Diperbarui baru saja';
             }, 10000);
         }
         
         function refreshMap() {
             // In a real app, this would refresh the map data
-            document.querySelector('#map-widget .widget-time').innerText = 'Diperbarui baru saja';
+            document.querySelector('.bus-map-section .widget-time').innerText = 'Diperbarui baru saja';
             addNotification('Peta diperbarui', 'normal');
         }
         
