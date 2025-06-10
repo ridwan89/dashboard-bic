@@ -212,20 +212,24 @@
         
         /* Bagian Kapasitas Bagasi */
         .bagasi-info {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
+            display: table;
+            width: 100%;
             margin-bottom: 8px;
         }
         
-        .bagasi-capacity {
-            flex: 1;
-            text-align: right;
+        .bagasi-row {
+            display: table-row;
         }
         
-        .bagasi-door {
-            flex: 1;
-            text-align: right;
+        .bagasi-label, .bagasi-value {
+            display: table-cell;
+            padding: 4px 0;
+            text-align: left;
+        }
+        
+        .bagasi-label {
+            font-weight: bold;
+            width: 50%;
         }
         
         /* Map Widget */
@@ -288,7 +292,6 @@
                         <div id="map"></div>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 10 detik lalu</span>
-                            <button class="widget-button" onclick="refreshMap()">Perbarui</button>
                         </div>
                     </div>
                 </div>
@@ -317,16 +320,23 @@
                             <i class="fas fa-suitcase widget-icon"></i>
                         </div>
                         <div class="bagasi-info">
-                            <div class="bagasi-capacity">
-                                <div class="widget-value">75%</div>
-                                <span class="widget-status status-warning">Terisi</span>
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Kapasitas:</div>
+                                <div class="bagasi-value">75% <span class="widget-status status-warning">Terisi</span></div>
                             </div>
-                            <div class="bagasi-door">
-                                <div class="widget-value">Tertutup</div>
-                                <span class="widget-status status-normal">Aman</span>
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Pintu Bagasi:</div>
+                                <div class="bagasi-value">Tertutup <span class="widget-status status-normal">Aman</span></div>
+                            </div>
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Berat:</div>
+                                <div class="bagasi-value">320 kg</div>
+                            </div>
+                            <div class="bagasi-row">
+                                <div class="bagasi-label">Volume:</div>
+                                <div class="bagasi-value">4.2 m³</div>
                             </div>
                         </div>
-                        <p class="widget-description">Kapasitas dan status kompartemen bagasi</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 5 menit lalu</span>
                             <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
@@ -371,10 +381,9 @@
                         </div>
                         <div class="widget-value">29°C</div>
                         <span class="widget-status status-normal">Cerah Berawan</span>
-                        <p class="widget-description">Jakarta - Tujuan berikutnya</p>
+                        <p class="widget-description">Jakarta</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 15 menit lalu</span>
-                            <button class="widget-button" onclick="refreshWeather()">Perbarui</button>
                         </div>
                     </div>
                     
@@ -399,6 +408,13 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
+        // Daftar kota untuk cuaca
+        const kotaList = [
+            "Jakarta", "Bandung", "Semarang", "Cirebon", "Surabaya", 
+            "Malang", "Sidoarjo", "Purwakarta", "Krawang", "Bogor", 
+            "Depok", "Tangerang", "Banten"
+        ];
+        
         // Fungsi untuk menampilkan informasi saat titik sensor diklik
         function showInfo(sensorType) {
             // Reset semua titik sensor
@@ -450,19 +466,15 @@
         function toggleBagasi() {
             const widget = document.getElementById('bagasi-widget');
             if (widget) {
-                const doorValue = widget.querySelector('.bagasi-door .widget-value');
-                const doorStatus = widget.querySelector('.bagasi-door .widget-status');
+                const doorValue = widget.querySelector('.bagasi-info .bagasi-value:nth-child(2)');
+                const doorStatus = widget.querySelector('.bagasi-info .widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                if (doorValue.innerText === 'Tertutup') {
-                    doorValue.innerText = 'Terbuka';
-                    doorStatus.innerText = 'Terbuka!';
-                    doorStatus.className = 'widget-status status-warning';
+                if (doorValue.innerText.includes('Tertutup')) {
+                    doorValue.innerHTML = 'Terbuka <span class="widget-status status-warning">Terbuka!</span>';
                     addNotification('Bagasi telah dibuka', 'warning');
                 } else {
-                    doorValue.innerText = 'Tertutup';
-                    doorStatus.innerText = 'Aman';
-                    doorStatus.className = 'widget-status status-normal';
+                    doorValue.innerHTML = 'Tertutup <span class="widget-status status-normal">Aman</span>';
                     addNotification('Bagasi telah ditutup', 'normal');
                 }
                 
@@ -500,25 +512,28 @@
         }
         
         // Fungsi untuk memperbarui cuaca
-        function refreshWeather() {
+        function updateWeather() {
             const widget = document.getElementById('cuaca-widget');
             if (widget) {
                 const valueElement = widget.querySelector('.widget-value');
                 const statusElement = widget.querySelector('.widget-status');
-                const timeElement = widget.querySelector('.widget-time');
                 const descElement = widget.querySelector('.widget-description');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                // Pilih kota secara acak
+                const randomKota = kotaList[Math.floor(Math.random() * kotaList.length)];
                 
                 const weatherData = [
-                    { temp: '29°C', status: 'Cerah', class: 'status-normal' },
-                    { temp: '27°C', status: 'Cerah Berawan', class: 'status-normal' },
-                    { temp: '25°C', status: 'Berawan', class: 'status-gray' },
-                    { temp: '23°C', status: 'Mendung', class: 'status-gray' },
-                    { temp: '22°C', status: 'Gerimis', class: 'status-gray' },
-                    { temp: '21°C', status: 'Hujan Ringan', class: 'status-gray' },
-                    { temp: '20°C', status: 'Hujan Sedang', class: 'status-danger' },
-                    { temp: '19°C', status: 'Hujan Lebat', class: 'status-danger' },
-                    { temp: '18°C', status: 'Badai Petir', class: 'status-danger' },
-                    { temp: '17°C', status: 'Kabut', class: 'status-danger' }
+                    { temp: `${Math.floor(Math.random() * 10) + 25}°C`, status: 'Cerah', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 22}°C`, status: 'Cerah Berawan', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 20}°C`, status: 'Berawan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 5) + 18}°C`, status: 'Mendung', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 17}°C`, status: 'Gerimis', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 16}°C`, status: 'Hujan Ringan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 15}°C`, status: 'Hujan Sedang', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 14}°C`, status: 'Hujan Lebat', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 13}°C`, status: 'Badai Petir', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 12}°C`, status: 'Kabut', class: 'status-danger' }
                 ];
                 
                 const randomWeather = weatherData[Math.floor(Math.random() * weatherData.length)];
@@ -526,9 +541,8 @@
                 valueElement.innerText = randomWeather.temp;
                 statusElement.innerText = randomWeather.status;
                 statusElement.className = `widget-status ${randomWeather.class}`;
+                descElement.innerText = randomKota;
                 timeElement.innerText = 'Diperbarui baru saja';
-                
-                addNotification(`Cuaca diperbarui: ${randomWeather.temp} ${randomWeather.status}`, 'normal');
             }
         }
         
@@ -571,39 +585,18 @@
                 
                 valueElement.innerText = `${occupied}/${totalSeats}`;
                 
-                if (percentage < 30) {
-                    statusElement.innerText = `${percentage}% Kosong`;
-                    statusElement.className = 'widget-status status-gray';
-                } else if (percentage >= 30 && percentage < 70) {
+                if (percentage < 50) {
                     statusElement.innerText = `${percentage}% Terisi`;
                     statusElement.className = 'widget-status status-normal';
+                } else if (percentage >= 50 && percentage < 90) {
+                    statusElement.innerText = `${percentage}% Terisi`;
+                    statusElement.className = 'widget-status status-gray';
                 } else {
                     statusElement.innerText = `${percentage}% Penuh`;
-                    statusElement.className = 'widget-status status-warning';
+                    statusElement.className = 'widget-status status-danger';
                 }
                 
                 timeElement.innerText = 'Diperbarui baru saja';
-            }
-        }
-        
-        // Fungsi untuk update deskripsi cuaca secara random
-        function updateWeatherDescription() {
-            const widget = document.getElementById('cuaca-widget');
-            if (widget) {
-                const descElement = widget.querySelector('.widget-description');
-                
-                const locations = [
-                    'Jakarta - Tujuan berikutnya',
-                    'Bandung - 45 km lagi',
-                    'Cikampek - 120 km lagi',
-                    'Tol Cipularang - 75 km lagi',
-                    'Rest Area KM 57 - 10 km lagi',
-                    'Puncak - 150 km lagi',
-                    'Bogor - 90 km lagi'
-                ];
-                
-                const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-                descElement.innerText = randomLocation;
             }
         }
         
@@ -625,7 +618,7 @@
             addNotification('Mengatur suhu kabin', 'normal');
         }
         
-        // Initialize map
+        // Initialize map with gray theme
         function initMap() {
             // Default coordinates (Jakarta)
             const defaultLat = -6.2088;
@@ -633,8 +626,11 @@
             
             const map = L.map('map').setView([defaultLat, defaultLng], 13);
             
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            // Gray theme map tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
             }).addTo(map);
             
             // Add bus marker
@@ -664,12 +660,6 @@
             }, 10000);
         }
         
-        function refreshMap() {
-            // In a real app, this would refresh the map data
-            document.querySelector('.bus-map-section .widget-time').innerText = 'Diperbarui baru saja';
-            addNotification('Peta diperbarui', 'normal');
-        }
-        
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
             // Tambahkan notifikasi awal
@@ -686,11 +676,15 @@
                 }
             }, 10000);
             
-            // Set interval untuk update kursi
-            setInterval(updateSeatStatus, 2000);
+            // Set interval untuk update kursi setiap 60 detik
+            setInterval(updateSeatStatus, 60000);
             
-            // Set interval untuk update deskripsi cuaca
-            setInterval(updateWeatherDescription, 2000);
+            // Set interval untuk update cuaca setiap 10 detik
+            setInterval(updateWeather, 10000);
+            
+            // Jalankan sekali saat pertama kali load
+            updateWeather();
+            updateSeatStatus();
             
             // Initialize map
             initMap();
