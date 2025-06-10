@@ -117,21 +117,6 @@
             min-width: 10px;
             min-height: 180px;
             position: relative;
-            cursor: move;
-            user-select: none;
-            /* Tambahan untuk resize */
-            resize: both;
-            overflow: auto;
-            max-width: 100%;
-            max-height: 500px;
-        }
-        
-        /* Handle untuk resize */
-        .widget::-webkit-resizer {
-            background-color: var(--secondary);
-            border-radius: 0 0 5px 0;
-            width: 15px;
-            height: 15px;
         }
         
         .widget-header {
@@ -277,7 +262,6 @@
             
             .widget {
                 padding: 12px;
-                resize: none; /* Nonaktifkan resize di mobile */
             }
         }
     </style>
@@ -641,133 +625,6 @@
             addNotification('Mengatur suhu kabin', 'normal');
         }
         
-        // Fungsi untuk mengubah ukuran widget secara manual
-        function resizeWidget(widgetId, width, height) {
-            const widget = document.getElementById(widgetId);
-            if (widget) {
-                widget.style.width = typeof width === 'number' ? `${width}px` : width;
-                widget.style.height = typeof height === 'number' ? `${height}px` : height;
-                widget.style.minWidth = 'unset';
-                widget.style.minHeight = 'unset';
-            }
-        }
-        
-        // Fungsi untuk reset ukuran widget ke default
-        function resetWidgetSize(widgetId) {
-            const widget = document.getElementById(widgetId);
-            if (widget) {
-                widget.style.width = '';
-                widget.style.height = '';
-                widget.style.minWidth = '';
-                widget.style.minHeight = '';
-            }
-        }
-        
-        // Fungsi untuk drag and drop widget
-        function makeDraggable() {
-            const widgets = document.querySelectorAll('.widget');
-            
-            widgets.forEach(widget => {
-                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-                let isDragging = false;
-                let originalX, originalY;
-                
-                widget.onmousedown = dragMouseDown;
-                
-                function dragMouseDown(e) {
-                    // Only drag if clicking on the header
-                    if (!e.target.classList.contains('widget-header') && 
-                        !e.target.classList.contains('widget-title') && 
-                        !e.target.classList.contains('widget-icon')) {
-                        return;
-                    }
-                    
-                    e = e || window.event;
-                    e.preventDefault();
-                    
-                    // Get the mouse cursor position at startup
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    
-                    // Store original position
-                    originalX = widget.offsetLeft;
-                    originalY = widget.offsetTop;
-                    
-                    document.onmouseup = closeDragElement;
-                    document.onmousemove = elementDrag;
-                    
-                    // Add dragging class
-                    widget.classList.add('dragging');
-                    isDragging = true;
-                }
-                
-                function elementDrag(e) {
-                    if (!isDragging) return;
-                    
-                    e = e || window.event;
-                    e.preventDefault();
-                    
-                    // Calculate the new cursor position
-                    pos1 = pos3 - e.clientX;
-                    pos2 = pos4 - e.clientY;
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    
-                    // Set the element's new position
-                    widget.style.top = (widget.offsetTop - pos2) + "px";
-                    widget.style.left = (widget.offsetLeft - pos1) + "px";
-                    widget.style.position = 'absolute';
-                }
-                
-                function closeDragElement() {
-                    if (!isDragging) return;
-                    
-                    // Stop moving when mouse button is released
-                    document.onmouseup = null;
-                    document.onmousemove = null;
-                    
-                    // Remove dragging class
-                    widget.classList.remove('dragging');
-                    isDragging = false;
-                    
-                    // Snap to grid (nearest widget position)
-                    snapToGrid(widget);
-                }
-                
-                function snapToGrid(element) {
-                    const widgetsSection = document.querySelector('.widgets-section');
-                    const widgets = Array.from(document.querySelectorAll('.widget'));
-                    const widgetIndex = widgets.indexOf(element);
-                    
-                    // Calculate grid position based on index
-                    const gridCols = 2;
-                    const row = Math.floor(widgetIndex / gridCols);
-                    const col = widgetIndex % gridCols;
-                    
-                    // Calculate new position
-                    const gap = 15;
-                    const widgetWidth = (widgetsSection.clientWidth - gap) / gridCols;
-                    const widgetHeight = 180 + gap;
-                    
-                    const newLeft = col * (widgetWidth + gap);
-                    const newTop = row * widgetHeight;
-                    
-                    // Animate to new position
-                    element.style.transition = 'all 0.3s ease';
-                    element.style.left = newLeft + 'px';
-                    element.style.top = newTop + 'px';
-                    
-                    // Remove transition after animation completes
-                    setTimeout(() => {
-                        element.style.transition = '';
-                        element.style.position = '';
-                        element.style.left = '';
-                        element.style.top = '';
-                    }, 300);
-                }
-            });
-        }
-        
         // Initialize map
         function initMap() {
             // Default coordinates (Jakarta)
@@ -835,15 +692,8 @@
             // Set interval untuk update deskripsi cuaca
             setInterval(updateWeatherDescription, 2000);
             
-            // Initialize drag and drop
-            makeDraggable();
-            
             // Initialize map
             initMap();
-            
-            // Contoh penggunaan resizeWidget:
-            // resizeWidget('pintu-depan-widget', 300, 250);
-            // resetWidgetSize('pintu-depan-widget');
         });
     </script>
 </body>
