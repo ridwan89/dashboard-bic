@@ -671,6 +671,17 @@
             
             // Initialize map
             initMap();
+
+            // Nonaktifkan zoom double-click di seluruh halaman
+            document.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            // Atau khusus untuk map saja:
+            // document.getElementById('map').addEventListener('dblclick', function(e) {
+            //     e.preventDefault();
+            // }, { passive: false });
+
         });
     </script>
 </body>
