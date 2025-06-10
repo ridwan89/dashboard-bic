@@ -151,7 +151,7 @@
             font-size: 13px;
             font-weight: 500;
         }
-
+        
         .widget-status span {
             padding: 2px 6px;
             border-radius: 12px;
@@ -293,7 +293,6 @@
                         <p class="widget-description">Status pintu masuk penumpang utama</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 2 menit lalu</span>
-                            <button class="widget-button" onclick="toggleDoor('pintu-depan')">Kontrol</button>
                         </div>
                     </div>
                     
@@ -304,11 +303,10 @@
                             <i class="fas fa-suitcase widget-icon"></i>
                         </div>
                         <div class="widget-value">75% - Tertutup</div>
-                        <span class="widget-status status-warning">Terisi</span>
+                        <span class="widget-status"><span class="status-warning">Terisi</span> - <span class="status-normal">Aman</span></span>
                         <p class="widget-description">Kapasitas dan status pintu bagasi</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 5 menit lalu</span>
-                            <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
                         </div>
                     </div>
                     
@@ -384,58 +382,58 @@
             "Depok", "Tangerang", "Banten"
         ];
         
-        // Fungsi untuk toggle pintu/bagasi
-        function toggleDoor(type) {
-            const widget = document.getElementById(`${type}-widget`);
+        // Fungsi untuk update random status pintu depan
+        function updatePintuDepan() {
+            const widget = document.getElementById('pintu-depan-widget');
             if (widget) {
                 const valueElement = widget.querySelector('.widget-value');
                 const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                if (valueElement.innerText === 'Tertutup') {
+                // Random status pintu (90% tertutup, 10% terbuka)
+                const isDoorOpen = Math.random() < 0.1;
+                
+                if (isDoorOpen) {
                     valueElement.innerText = 'Terbuka';
                     statusElement.innerText = 'Terbuka!';
-                    statusElement.className = 'widget-status status-warning';
-                    addNotification(`Pintu depan telah dibuka`, 'warning');
+                    statusElement.className = 'widget-status status-danger';
+                    addNotification('Pintu depan terbuka', 'danger');
                 } else {
                     valueElement.innerText = 'Tertutup';
                     statusElement.innerText = 'Aman';
                     statusElement.className = 'widget-status status-normal';
-                    addNotification(`Pintu depan telah ditutup`, 'normal');
                 }
                 
                 timeElement.innerText = 'Diperbarui baru saja';
             }
         }
         
-        // Fungsi untuk toggle bagasi
-        function toggleBagasi() {
+        // Fungsi untuk update status bagasi
+        function updateBagasiStatus() {
             const widget = document.getElementById('bagasi-widget');
             if (widget) {
                 const valueElement = widget.querySelector('.widget-value');
                 const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                const currentValue = valueElement.innerText;
-                const parts = currentValue.split(' - ');
-                const capacity = parts[0]; // "75%"
-                const currentDoorStatus = parts[1]; // "Tertutup" atau "Terbuka"
+                // Generate random capacity (0-100%)
+                const randomCapacity = Math.floor(Math.random() * 101);
                 
-                // Toggle door status
-                const newDoorStatus = currentDoorStatus === 'Tertutup' ? 'Terbuka' : 'Tertutup';
-                const newDoorStatusText = newDoorStatus === 'Tertutup' ? 'Aman' : 'Bahaya';
-                const newDoorStatusClass = newDoorStatus === 'Tertutup' ? 'status-normal' : 'status-danger';
+                // Generate random door status (90% closed, 10% open)
+                const isDoorOpen = Math.random() < 0.1;
+                const doorStatus = isDoorOpen ? 'Terbuka' : 'Tertutup';
+                const doorStatusText = isDoorOpen ? 'Bahaya' : 'Aman';
+                const doorStatusClass = isDoorOpen ? 'status-danger' : 'status-normal';
                 
                 // Update value element
-                valueElement.innerText = `${capacity} - ${newDoorStatus}`;
+                valueElement.innerText = `${randomCapacity}% - ${doorStatus}`;
                 
-                // Get current capacity status
-                const capacityPercent = parseInt(capacity);
+                // Determine capacity status
                 let capacityStatus, capacityStatusClass;
-                if (capacityPercent < 30) {
+                if (randomCapacity < 30) {
                     capacityStatus = 'Kosong';
                     capacityStatusClass = 'status-normal';
-                } else if (capacityPercent < 80) {
+                } else if (randomCapacity < 80) {
                     capacityStatus = 'Terisi';
                     capacityStatusClass = 'status-warning';
                 } else {
@@ -446,10 +444,18 @@
                 // Update status element
                 statusElement.innerHTML = `
                     <span class="${capacityStatusClass}">${capacityStatus}</span> - 
-                    <span class="${newDoorStatusClass}">${newDoorStatusText}</span>
+                    <span class="${doorStatusClass}">${doorStatusText}</span>
                 `;
                 
                 timeElement.innerText = 'Diperbarui baru saja';
+                
+                // Notifikasi jika bagasi penuh atau pintu terbuka
+                if (randomCapacity >= 80) {
+                    addNotification('Bagasi hampir penuh', 'warning');
+                }
+                if (isDoorOpen) {
+                    addNotification('Pintu bagasi terbuka', 'danger');
+                }
             }
         }
         
@@ -512,7 +518,7 @@
                 valueElement.innerText = randomWeather.temp;
                 statusElement.innerText = randomWeather.status;
                 statusElement.className = `widget-status ${randomWeather.class}`;
-                descElement.innerText = randomKota;
+                descElement.innerHTML = `<strong>${randomKota}</strong>`;
                 timeElement.innerText = 'Diperbarui baru saja';
             }
         }
@@ -571,103 +577,20 @@
             }
         }
         
-        // Fungsi untuk update status bagasi secara berkala
-        function updateBagasiStatus() {
-            const widget = document.getElementById('bagasi-widget');
-            if (widget) {
-                const valueElement = widget.querySelector('.widget-value');
-                const statusElement = widget.querySelector('.widget-status');
-                const timeElement = widget.querySelector('.widget-time');
-                
-                // Generate random capacity (0-100%)
-                const randomCapacity = Math.floor(Math.random() * 101);
-                
-                // Generate random door status (90% closed, 10% open)
-                const isDoorOpen = Math.random() < 0.1;
-                const doorStatus = isDoorOpen ? 'Terbuka' : 'Tertutup';
-                const doorStatusText = isDoorOpen ? 'Bahaya' : 'Aman';
-                const doorStatusClass = isDoorOpen ? 'status-danger' : 'status-normal';
-                
-                // Update value element (format: "75% - Tertutup")
-                valueElement.innerText = `${randomCapacity}% - ${doorStatus}`;
-                
-                // Determine capacity status
-                let capacityStatus, capacityStatusClass;
-                if (randomCapacity < 30) {
-                    capacityStatus = 'Kosong';
-                    capacityStatusClass = 'status-normal';
-                } else if (randomCapacity < 80) {
-                    capacityStatus = 'Terisi';
-                    capacityStatusClass = 'status-warning';
-                } else {
-                    capacityStatus = 'Penuh';
-                    capacityStatusClass = 'status-danger';
-                }
-                
-                // Update status element (format: "Terisi - Aman")
-                statusElement.innerHTML = `
-                    <span class="${capacityStatusClass}">${capacityStatus}</span> - 
-                    <span class="${doorStatusClass}">${doorStatusText}</span>
-                `;
-                
-                timeElement.innerText = 'Diperbarui baru saja';
-            }
-        }
-        
-        // Di dalam fungsi toggleBagasi()
-        function toggleBagasi() {
-            const widget = document.getElementById('bagasi-widget');
-            if (widget) {
-                const valueElement = widget.querySelector('.widget-value');
-                const statusElement = widget.querySelector('.widget-status');
-                const timeElement = widget.querySelector('.widget-time');
-                
-                const currentValue = valueElement.innerText;
-                const parts = currentValue.split(' - ');
-                const capacity = parts[0];
-                const doorStatus = parts[1];
-                
-                if (doorStatus === 'Tertutup') {
-                    valueElement.innerText = `${capacity} - Terbuka`;
-                    statusElement.innerText = 'Terbuka!';
-                    statusElement.className = 'widget-status status-danger'; // Merah untuk pintu terbuka
-                    addNotification('Bagasi telah dibuka', 'warning');
-                } else {
-                    valueElement.innerText = `${capacity} - Tertutup`;
-                    // Set status berdasarkan kapasitas
-                    const capacityPercent = parseInt(capacity);
-                    if (capacityPercent < 30) {
-                        statusElement.innerText = 'Kosong';
-                        statusElement.className = 'widget-status status-normal'; // Hijau
-                    } else if (capacityPercent < 80) {
-                        statusElement.innerText = 'Terisi';
-                        statusElement.className = 'widget-status status-warning'; // Kuning
-                    } else {
-                        statusElement.innerText = 'Penuh';
-                        statusElement.className = 'widget-status status-danger'; // Merah
-                    }
-                    addNotification('Bagasi telah ditutup', 'normal');
-                }
-                
-                timeElement.innerText = 'Diperbarui baru saja';
-            }
-        }
-
-        
         // Fungsi untuk menambahkan notifikasi
         function addNotification(message, priority) {
-            console.log(`[${priority}] ${message}`);
+            console.log(`[${priority.toUpperCase()}] ${message}`);
         }
         
         // Fungsi placeholder untuk tindakan lainnya
         function viewSeats() {
-            addNotification('Membuka detail okupansi kursi', 'normal');
+            addNotification('Membuka detail okupansi kursi', 'info');
         }
         
         function adjustTemp() {
             const randomTemp = Math.floor(Math.random() * 16) + 15;
             updateSuhu(randomTemp);
-            addNotification('Mengatur suhu kabin', 'normal');
+            addNotification('Mengatur suhu kabin', 'info');
         }
         
         // Initialize map with gray theme
@@ -715,8 +638,8 @@
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
             // Tambahkan notifikasi awal
-            addNotification('Sistem bus #KB001 siap digunakan', 'normal');
-            addNotification('Pemeriksaan awal selesai, semua sistem normal', 'normal');
+            addNotification('Sistem bus #KB001 siap digunakan', 'info');
+            addNotification('Pemeriksaan awal selesai, semua sistem normal', 'info');
             
             // Set interval untuk perubahan suhu acak (simulasi)
             setInterval(() => {
@@ -734,12 +657,16 @@
             // Set interval untuk update cuaca setiap 10 detik
             setInterval(updateWeather, 10000);
             
+            // Set interval untuk update pintu depan setiap 60 detik
+            setInterval(updatePintuDepan, 60000);
+            
             // Set interval untuk update bagasi setiap 15 detik
             setInterval(updateBagasiStatus, 15000);
             
             // Jalankan sekali saat pertama kali load
             updateWeather();
             updateSeatStatus();
+            updatePintuDepan();
             updateBagasiStatus();
             
             // Initialize map
