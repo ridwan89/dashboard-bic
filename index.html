@@ -210,29 +210,6 @@
             background-color: #2980b9;
         }
         
-        /* Bagian Kapasitas Bagasi */
-        .bagasi-info {
-            display: table;
-            width: 100%;
-            margin-bottom: 8px;
-        }
-        
-        .bagasi-row {
-            display: table-row;
-        }
-        
-        .bagasi-label, .bagasi-value {
-            display: table-cell;
-            padding: 4px 0;
-            text-align: left;
-            font-size: 13px;
-        }
-        
-        .bagasi-label {
-            font-weight: bold;
-            width: 50%;
-        }
-        
         /* Map Widget */
         .map-widget {
             height: 100%;
@@ -320,16 +297,9 @@
                             <h3 class="widget-title">Bagasi</h3>
                             <i class="fas fa-suitcase widget-icon"></i>
                         </div>
-                        <div class="bagasi-info">
-                            <div class="bagasi-row">
-                                <div class="bagasi-label">Kapasitas</div>
-                                <div class="bagasi-value">75% <span class="widget-status status-warning">Terisi</span></div>
-                            </div>
-                            <div class="bagasi-row">
-                                <div class="bagasi-label">Pintu Bagasi</div>
-                                <div class="bagasi-value">Tertutup <span class="widget-status status-normal">Aman</span></div>
-                            </div>
-                        </div>
+                        <div class="widget-value">75% - Tertutup</div>
+                        <span class="widget-status status-warning">Terisi</span>
+                        <p class="widget-description">Kapasitas dan status pintu bagasi</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 5 menit lalu</span>
                             <button class="widget-button" onclick="toggleBagasi()">Kontrol</button>
@@ -373,8 +343,8 @@
                             <i class="fas fa-cloud-sun widget-icon"></i>
                         </div>
                         <div class="widget-value">29°C</div>
+                        <p class="widget-description" style="font-weight: bold;">Jakarta</p>
                         <span class="widget-status status-normal">Cerah Berawan</span>
-                        <p class="widget-description">Jakarta</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 15 menit lalu</span>
                         </div>
@@ -436,14 +406,24 @@
         function toggleBagasi() {
             const widget = document.getElementById('bagasi-widget');
             if (widget) {
-                const doorValue = widget.querySelector('.bagasi-info .bagasi-value:last-child');
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                if (doorValue.innerText.includes('Tertutup')) {
-                    doorValue.innerHTML = 'Terbuka <span class="widget-status status-warning">Terbuka!</span>';
+                const currentValue = valueElement.innerText;
+                const parts = currentValue.split(' - ');
+                const capacity = parts[0];
+                const doorStatus = parts[1];
+                
+                if (doorStatus === 'Tertutup') {
+                    valueElement.innerText = `${capacity} - Terbuka`;
+                    statusElement.innerText = 'Terbuka!';
+                    statusElement.className = 'widget-status status-warning';
                     addNotification('Bagasi telah dibuka', 'warning');
                 } else {
-                    doorValue.innerHTML = 'Tertutup <span class="widget-status status-normal">Aman</span>';
+                    valueElement.innerText = `${capacity} - Tertutup`;
+                    statusElement.innerText = 'Terisi';
+                    statusElement.className = 'widget-status status-warning';
                     addNotification('Bagasi telah ditutup', 'normal');
                 }
                 
@@ -573,8 +553,8 @@
         function updateBagasiStatus() {
             const widget = document.getElementById('bagasi-widget');
             if (widget) {
-                const capacityElement = widget.querySelector('.bagasi-info .bagasi-value:first-child');
-                const doorElement = widget.querySelector('.bagasi-info .bagasi-value:last-child');
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
                 // Generate random capacity between 0-100%
@@ -598,12 +578,11 @@
                 // Generate random door status (90% closed, 10% open)
                 const isDoorOpen = Math.random() < 0.1;
                 const doorStatus = isDoorOpen ? 'Terbuka' : 'Tertutup';
-                const doorStatusClass = isDoorOpen ? 'status-warning' : 'status-normal';
-                const doorStatusText = isDoorOpen ? 'Terbuka!' : 'Aman';
                 
                 // Update elements
-                capacityElement.innerHTML = `${randomCapacity}% <span class="widget-status ${capacityStatusClass}">${capacityStatus}</span>`;
-                doorElement.innerHTML = `${doorStatus} <span class="widget-status ${doorStatusClass}">${doorStatusText}</span>`;
+                valueElement.innerText = `${randomCapacity}% - ${doorStatus}`;
+                statusElement.innerText = capacityStatus;
+                statusElement.className = `widget-status ${capacityStatusClass}`;
                 timeElement.innerText = 'Diperbarui baru saja';
             }
         }
