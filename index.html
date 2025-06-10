@@ -563,16 +563,13 @@
                 
                 if (randomCapacity < 30) {
                     capacityStatus = 'Kosong';
-                    capacityStatusClass = 'status-gray';
-                } else if (randomCapacity < 70) {
+                    capacityStatusClass = 'status-normal'; // Hijau
+                } else if (randomCapacity < 80) {
                     capacityStatus = 'Terisi';
-                    capacityStatusClass = 'status-normal';
-                } else if (randomCapacity < 90) {
-                    capacityStatus = 'Hampir Penuh';
-                    capacityStatusClass = 'status-warning';
+                    capacityStatusClass = 'status-warning'; // Kuning
                 } else {
                     capacityStatus = 'Penuh';
-                    capacityStatusClass = 'status-danger';
+                    capacityStatusClass = 'status-danger'; // Merah
                 }
                 
                 // Generate random door status (90% closed, 10% open)
@@ -581,11 +578,59 @@
                 
                 // Update elements
                 valueElement.innerText = `${randomCapacity}% - ${doorStatus}`;
-                statusElement.innerText = capacityStatus;
-                statusElement.className = `widget-status ${capacityStatusClass}`;
+                
+                // Set status berdasarkan pintu dan kapasitas
+                if (isDoorOpen) {
+                    statusElement.innerText = 'Terbuka!';
+                    statusElement.className = 'widget-status status-danger'; // Merah untuk pintu terbuka
+                } else {
+                    statusElement.innerText = capacityStatus;
+                    statusElement.className = `widget-status ${capacityStatusClass}`;
+                }
+                
                 timeElement.innerText = 'Diperbarui baru saja';
             }
         }
+        
+        // Di dalam fungsi toggleBagasi()
+        function toggleBagasi() {
+            const widget = document.getElementById('bagasi-widget');
+            if (widget) {
+                const valueElement = widget.querySelector('.widget-value');
+                const statusElement = widget.querySelector('.widget-status');
+                const timeElement = widget.querySelector('.widget-time');
+                
+                const currentValue = valueElement.innerText;
+                const parts = currentValue.split(' - ');
+                const capacity = parts[0];
+                const doorStatus = parts[1];
+                
+                if (doorStatus === 'Tertutup') {
+                    valueElement.innerText = `${capacity} - Terbuka`;
+                    statusElement.innerText = 'Terbuka!';
+                    statusElement.className = 'widget-status status-danger'; // Merah untuk pintu terbuka
+                    addNotification('Bagasi telah dibuka', 'warning');
+                } else {
+                    valueElement.innerText = `${capacity} - Tertutup`;
+                    // Set status berdasarkan kapasitas
+                    const capacityPercent = parseInt(capacity);
+                    if (capacityPercent < 30) {
+                        statusElement.innerText = 'Kosong';
+                        statusElement.className = 'widget-status status-normal'; // Hijau
+                    } else if (capacityPercent < 80) {
+                        statusElement.innerText = 'Terisi';
+                        statusElement.className = 'widget-status status-warning'; // Kuning
+                    } else {
+                        statusElement.innerText = 'Penuh';
+                        statusElement.className = 'widget-status status-danger'; // Merah
+                    }
+                    addNotification('Bagasi telah ditutup', 'normal');
+                }
+                
+                timeElement.innerText = 'Diperbarui baru saja';
+            }
+        }
+
         
         // Fungsi untuk menambahkan notifikasi
         function addNotification(message, priority) {
