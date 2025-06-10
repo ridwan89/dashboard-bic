@@ -119,6 +119,19 @@
             position: relative;
             cursor: move;
             user-select: none;
+            /* Tambahan untuk resize */
+            resize: both;
+            overflow: auto;
+            max-width: 100%;
+            max-height: 500px;
+        }
+        
+        /* Handle untuk resize */
+        .widget::-webkit-resizer {
+            background-color: var(--secondary);
+            border-radius: 0 0 5px 0;
+            width: 15px;
+            height: 15px;
         }
         
         .widget-header {
@@ -264,6 +277,7 @@
             
             .widget {
                 padding: 12px;
+                resize: none; /* Nonaktifkan resize di mobile */
             }
         }
     </style>
@@ -627,6 +641,28 @@
             addNotification('Mengatur suhu kabin', 'normal');
         }
         
+        // Fungsi untuk mengubah ukuran widget secara manual
+        function resizeWidget(widgetId, width, height) {
+            const widget = document.getElementById(widgetId);
+            if (widget) {
+                widget.style.width = typeof width === 'number' ? `${width}px` : width;
+                widget.style.height = typeof height === 'number' ? `${height}px` : height;
+                widget.style.minWidth = 'unset';
+                widget.style.minHeight = 'unset';
+            }
+        }
+        
+        // Fungsi untuk reset ukuran widget ke default
+        function resetWidgetSize(widgetId) {
+            const widget = document.getElementById(widgetId);
+            if (widget) {
+                widget.style.width = '';
+                widget.style.height = '';
+                widget.style.minWidth = '';
+                widget.style.minHeight = '';
+            }
+        }
+        
         // Fungsi untuk drag and drop widget
         function makeDraggable() {
             const widgets = document.querySelectorAll('.widget');
@@ -804,6 +840,10 @@
             
             // Initialize map
             initMap();
+            
+            // Contoh penggunaan resizeWidget:
+            // resizeWidget('pintu-depan-widget', 300, 250);
+            // resetWidgetSize('pintu-depan-widget');
         });
     </script>
 </body>
