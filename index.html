@@ -47,11 +47,23 @@
             align-items: center;
             margin-bottom: 20px;
         }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
         
         .header h1 {
             margin: 0;
             color: var(--primary);
             font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        .datetime-display {
+            font-weight: bold;
+            color: var(--primary);
             transition: color 0.3s;
         }
         
@@ -316,7 +328,8 @@
         body.dark-mode .widget-description,
         body.dark-mode .notification-bell,
         body.dark-mode .fullscreen-button,
-        body.dark-mode .dark-mode-button {
+        body.dark-mode .dark-mode-button,
+        body.dark-mode .datetime-display {
             color: #f0f0f0;
         }
 
@@ -349,6 +362,12 @@
             .header h1 {
                 font-size: 20px;
             }
+
+            .header-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
             
             .widget {
                 padding: 12px;
@@ -374,7 +393,10 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1>BusCabin Monitor</h1>
+                <div class="header-title">
+                    <h1>BusCabin Monitor</h1>
+                    <div id="datetime" class="datetime-display"></div>
+                </div>
                 <div class="user-menu">
                     <button id="dark-mode-toggle" class="dark-mode-button" title="Toggle Dark Mode">
                         <i class="fas fa-moon"></i>
@@ -509,6 +531,34 @@
             "Malang", "Sidoarjo", "Purwakarta", "Krawang", "Bogor", 
             "Depok", "Tangerang", "Banten"
         ];
+        
+        // Fungsi untuk update waktu dan tanggal
+        function updateDateTime() {
+            const datetimeElement = document.getElementById('datetime');
+            if (datetimeElement) {
+                const now = new Date();
+                
+                // Format waktu (HH:MM:SS)
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const timeString = `${hours}:${minutes}:${seconds}`;
+                
+                // Daftar nama hari dalam bahasa Indonesia
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const dayName = days[now.getDay()];
+                
+                // Format tanggal (DD MMMM YYYY)
+                const date = String(now.getDate()).padStart(2, '0');
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const monthName = months[now.getMonth()];
+                const year = now.getFullYear();
+                const dateString = `${dayName}, ${date} ${monthName} ${year}`;
+                
+                // Gabungkan waktu dan tanggal
+                datetimeElement.textContent = `${timeString} - ${dateString}`;
+            }
+        }
         
         // Fungsi untuk update random status pintu depan
         function updatePintuDepan() {
@@ -893,13 +943,10 @@
 
             // Set interval untuk update koneksi setiap 60 detik
             setInterval(updateConnectionStatus, 60000);
-            
-            // Jalankan sekali saat pertama kali load
-            updateWeather();
-            updateSeatStatus();
-            updatePintuDepan();
-            updateBagasiStatus();
-            updateConnectionStatus();
+
+            // Update waktu setiap detik
+            setInterval(updateDateTime, 1000);
+            updateDateTime(); // Jalankan sekali saat pertama kali load
             
             // Initialize map
             initMap();
