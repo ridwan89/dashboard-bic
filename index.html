@@ -152,6 +152,13 @@
             transition: color 0.3s;
         }
         
+        .widget-date {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+        
         .widget-status {
             display: inline-block;
             padding: 4px 8px;
@@ -314,6 +321,7 @@
         body.dark-mode .widget-title,
         body.dark-mode .widget-value,
         body.dark-mode .widget-description,
+        body.dark-mode .widget-date,
         body.dark-mode .notification-bell,
         body.dark-mode .fullscreen-button,
         body.dark-mode .dark-mode-button {
@@ -474,7 +482,8 @@
                             <h3 class="widget-title">Cuaca</h3>
                             <i class="fas fa-cloud-sun widget-icon"></i>
                         </div>
-                        <div class="widget-value">29°C</div>
+                        <div class="widget-value" id="weather-value">29°C</div>
+                        <div class="widget-date" id="weather-date"></div>
                         <p class="widget-description" style="font-weight: bold;">Jakarta</p>
                         <span class="widget-status status-normal">Cerah Berawan</span>
                         <div class="widget-footer">
@@ -621,6 +630,7 @@
             const widget = document.getElementById('cuaca-widget');
             if (widget) {
                 const valueElement = widget.querySelector('.widget-value');
+                const dateElement = widget.querySelector('.widget-date');
                 const statusElement = widget.querySelector('.widget-status');
                 const descElement = widget.querySelector('.widget-description');
                 const timeElement = widget.querySelector('.widget-time');
@@ -629,21 +639,40 @@
                 const randomKota = kotaList[Math.floor(Math.random() * kotaList.length)];
                 
                 const weatherData = [
-                    { temp: `${Math.floor(Math.random() * 10) + 25}°C`, status: 'Cerah', class: 'status-normal' },
-                    { temp: `${Math.floor(Math.random() * 5) + 22}°C`, status: 'Cerah Berawan', class: 'status-normal' },
-                    { temp: `${Math.floor(Math.random() * 5) + 20}°C`, status: 'Berawan', class: 'status-gray' },
-                    { temp: `${Math.floor(Math.random() * 5) + 18}°C`, status: 'Mendung', class: 'status-gray' },
-                    { temp: `${Math.floor(Math.random() * 3) + 17}°C`, status: 'Gerimis', class: 'status-gray' },
-                    { temp: `${Math.floor(Math.random() * 3) + 16}°C`, status: 'Hujan Ringan', class: 'status-gray' },
-                    { temp: `${Math.floor(Math.random() * 3) + 15}°C`, status: 'Hujan Sedang', class: 'status-danger' },
-                    { temp: `${Math.floor(Math.random() * 3) + 14}°C`, status: 'Hujan Lebat', class: 'status-danger' },
-                    { temp: `${Math.floor(Math.random() * 3) + 13}°C`, status: 'Badai Petir', class: 'status-danger' },
-                    { temp: `${Math.floor(Math.random() * 3) + 12}°C`, status: 'Kabut', class: 'status-danger' }
+                    { temp: `${Math.floor(Math.random() * 10) + 25}`, status: 'Cerah', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 22}`, status: 'Cerah Berawan', class: 'status-normal' },
+                    { temp: `${Math.floor(Math.random() * 5) + 20}`, status: 'Berawan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 5) + 18}`, status: 'Mendung', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 17}`, status: 'Gerimis', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 16}`, status: 'Hujan Ringan', class: 'status-gray' },
+                    { temp: `${Math.floor(Math.random() * 3) + 15}`, status: 'Hujan Sedang', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 14}`, status: 'Hujan Lebat', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 13}`, status: 'Badai Petir', class: 'status-danger' },
+                    { temp: `${Math.floor(Math.random() * 3) + 12}`, status: 'Kabut', class: 'status-danger' }
                 ];
                 
                 const randomWeather = weatherData[Math.floor(Math.random() * weatherData.length)];
                 
-                valueElement.innerText = randomWeather.temp;
+                // Dapatkan waktu saat ini
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const timeString = `${hours}:${minutes}:${seconds}`;
+                
+                // Daftar nama hari dalam bahasa Indonesia
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                
+                const dayName = days[now.getDay()];
+                const date = now.getDate();
+                const monthName = months[now.getMonth()];
+                const year = now.getFullYear();
+                const dateString = `${dayName}, ${date} ${monthName} ${year}`;
+                
+                // Update elemen
+                valueElement.innerText = `${randomWeather.temp}°C - ${timeString}`;
+                dateElement.innerText = dateString;
                 statusElement.innerText = randomWeather.status;
                 statusElement.className = `widget-status ${randomWeather.class}`;
                 descElement.innerHTML = `<strong>${randomKota}</strong>`;
@@ -866,8 +895,8 @@
             // Set interval untuk update kursi setiap 60 detik
             setInterval(updateSeatStatus, 60000);
             
-            // Set interval untuk update cuaca setiap 10 detik
-            setInterval(updateWeather, 10000);
+            // Set interval untuk update cuaca setiap detik
+            setInterval(updateWeather, 1000);
             
             // Set interval untuk update pintu depan setiap 60 detik
             setInterval(updatePintuDepan, 60000);
