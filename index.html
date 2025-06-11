@@ -418,7 +418,7 @@
                         </div>
                         <div class="widget-value">Tertutup</div>
                         <span class="widget-status status-normal">Aman</span>
-                        <p class="widget-description">Status semua pintu kendaraan</p>
+                        <p class="widget-description">Status pintu penumpang</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 2 menit lalu</span>
                         </div>
@@ -471,7 +471,7 @@
                     <!-- Cuaca -->
                     <div class="widget" id="cuaca-widget">
                         <div class="widget-header">
-                            <h3 class="widget-title">Cuaca</h3>
+                            <h3 class="widget-title">Info Cuaca</h3>
                             <i class="fas fa-cloud-sun widget-icon"></i>
                         </div>
                         <div class="widget-value">29°C</div>
@@ -518,8 +518,8 @@
                 const statusElement = widget.querySelector('.widget-status');
                 const timeElement = widget.querySelector('.widget-time');
                 
-                // Random status pintu (90% tertutup, 10% terbuka)
-                const isDoorOpen = Math.random() < 0.4;
+                // Random status pintu (80% tertutup, 20% terbuka)
+                const isDoorOpen = Math.random() < 0.2;
                 
                 if (isDoorOpen) {
                     // Random jenis pintu yang terbuka
@@ -563,8 +563,8 @@
                 // Generate random capacity (0-100%)
                 const randomCapacity = Math.floor(Math.random() * 101);
                 
-                // Generate random door status (90% closed, 10% open)
-                const isDoorOpen = Math.random() < 0.1;
+                // Generate random door status (80% closed, 20% open)
+                const isDoorOpen = Math.random() < 0.2;
                 const doorStatus = isDoorOpen ? 'Terbuka' : 'Tertutup';
                 const doorStatusText = isDoorOpen ? 'Bahaya' : 'Aman';
                 const doorStatusClass = isDoorOpen ? 'status-danger' : 'status-normal';
