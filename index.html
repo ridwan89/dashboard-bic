@@ -410,15 +410,15 @@
                 
                 <!-- Bagian Widgets -->
                 <div class="widgets-section">
-                    <!-- Pintu Depan -->
+                    <!-- Status Pintu -->
                     <div class="widget" id="pintu-depan-widget">
                         <div class="widget-header">
-                            <h3 class="widget-title">Pintu Depan</h3>
-                            <i class="fas fa-door-open widget-icon"></i>
+                            <h3 class="widget-title">Status Pintu</h3>
+                            <i class="fas fa-door-closed widget-icon"></i>
                         </div>
-                        <div class="widget-value">Tertutup</div>
+                        <div class="widget-value">Semua Pintu Tertutup</div>
                         <span class="widget-status status-normal">Aman</span>
-                        <p class="widget-description">Status pintu masuk penumpang utama</p>
+                        <p class="widget-description">Status semua pintu kendaraan</p>
                         <div class="widget-footer">
                             <span class="widget-time">Diperbarui 2 menit lalu</span>
                         </div>
@@ -522,12 +522,28 @@
                 const isDoorOpen = Math.random() < 0.1;
                 
                 if (isDoorOpen) {
-                    valueElement.innerText = 'Terbuka';
-                    statusElement.innerText = 'Terbuka!';
+                    // Random jenis pintu yang terbuka
+                    const doorTypes = [
+                        { name: 'Pintu Depan', icon: 'fa-door-open' },
+                        { name: 'Pintu Belakang', icon: 'fa-door-closed' },
+                        { name: 'Pintu Pengemudi', icon: 'fa-car-side' }
+                    ];
+                    const randomDoor = doorTypes[Math.floor(Math.random() * doorTypes.length)];
+                    
+                    // Update icon di widget header
+                    const iconElement = widget.querySelector('.widget-icon');
+                    iconElement.className = `fas ${randomDoor.icon} widget-icon`;
+                    
+                    valueElement.innerText = `${randomDoor.name} Terbuka`;
+                    statusElement.innerText = 'Bahaya!';
                     statusElement.className = 'widget-status status-danger';
-                    addNotification('Pintu depan terbuka', 'danger');
+                    addNotification(`${randomDoor.name} terbuka`, 'danger');
                 } else {
-                    valueElement.innerText = 'Tertutup';
+                    // Kembalikan ke icon default
+                    const iconElement = widget.querySelector('.widget-icon');
+                    iconElement.className = 'fas fa-door-closed widget-icon';
+                    
+                    valueElement.innerText = 'Semua Pintu Tertutup';
                     statusElement.innerText = 'Aman';
                     statusElement.className = 'widget-status status-normal';
                 }
