@@ -416,7 +416,7 @@
                             <h3 class="widget-title">Status Pintu</h3>
                             <i class="fas fa-door-closed widget-icon"></i>
                         </div>
-                        <div class="widget-value">Semua Pintu Tertutup</div>
+                        <div class="widget-value">Tertutup</div>
                         <span class="widget-status status-normal">Aman</span>
                         <p class="widget-description">Status semua pintu kendaraan</p>
                         <div class="widget-footer">
@@ -519,7 +519,7 @@
                 const timeElement = widget.querySelector('.widget-time');
                 
                 // Random status pintu (90% tertutup, 10% terbuka)
-                const isDoorOpen = Math.random() < 0.1;
+                const isDoorOpen = Math.random() < 0.4;
                 
                 if (isDoorOpen) {
                     // Random jenis pintu yang terbuka
@@ -543,7 +543,7 @@
                     const iconElement = widget.querySelector('.widget-icon');
                     iconElement.className = 'fas fa-door-closed widget-icon';
                     
-                    valueElement.innerText = 'Semua Pintu Tertutup';
+                    valueElement.innerText = 'Tertutup';
                     statusElement.innerText = 'Aman';
                     statusElement.className = 'widget-status status-normal';
                 }
