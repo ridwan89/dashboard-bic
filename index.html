@@ -25,6 +25,7 @@
             padding: 0;
             background-color: #f4f7f6;
             color: #333;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         .dashboard-container {
@@ -51,6 +52,7 @@
             margin: 0;
             color: var(--primary);
             font-size: 24px;
+            transition: color 0.3s;
         }
         
         .user-menu {
@@ -62,6 +64,8 @@
             position: relative;
             margin-right: 20px;
             cursor: pointer;
+            color: var(--primary);
+            transition: color 0.3s;
         }
         
         .notification-badge {
@@ -98,6 +102,7 @@
             min-width: 300px;
             min-height: 300px;
             position: relative;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         
         /* Widgets Grid */
@@ -117,6 +122,7 @@
             min-width: 10px;
             min-height: 180px;
             position: relative;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         
         .widget-header {
@@ -130,6 +136,7 @@
             margin: 0;
             font-size: 16px;
             color: var(--primary);
+            transition: color 0.3s;
         }
         
         .widget-icon {
@@ -142,6 +149,7 @@
             font-weight: bold;
             margin: 8px 0;
             color: var(--primary);
+            transition: color 0.3s;
         }
         
         .widget-status {
@@ -187,6 +195,7 @@
             font-size: 13px;
             color: #7f8c8d;
             margin-top: 8px;
+            transition: color 0.3s;
         }
         
         .widget-footer {
@@ -199,6 +208,7 @@
         .widget-time {
             font-size: 11px;
             color: #95a5a6;
+            transition: color 0.3s;
         }
         
         .widget-button {
@@ -228,6 +238,98 @@
             background-color: rgba(255, 255, 255, 0.8);
         }
         
+        /* Fullscreen Button */
+        .fullscreen-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-right: 20px;
+            padding: 5px;
+            transition: transform 0.2s, color 0.3s;
+        }
+        
+        .fullscreen-button:hover {
+            transform: scale(1.1);
+            color: var(--secondary);
+        }
+        
+        .fullscreen-button i {
+            vertical-align: middle;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .connection-status i {
+            margin-right: 5px;
+        }
+        
+        .connection-status.connected {
+            color: #27ae60;
+        }
+        
+        .connection-status.disconnected {
+            color: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Dark Mode Button */
+        .dark-mode-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-right: 20px;
+            padding: 5px;
+            transition: transform 0.2s, color 0.3s;
+        }
+        
+        .dark-mode-button:hover {
+            transform: scale(1.1);
+            color: var(--secondary);
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .header h1,
+        body.dark-mode .widget-title,
+        body.dark-mode .widget-value,
+        body.dark-mode .widget-description,
+        body.dark-mode .notification-bell,
+        body.dark-mode .fullscreen-button,
+        body.dark-mode .dark-mode-button {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .widget,
+        body.dark-mode .bus-map-section {
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        body.dark-mode .widget-time {
+            color: #b0b0b0;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .content-wrapper {
@@ -251,52 +353,19 @@
             .widget {
                 padding: 12px;
             }
-        }
-        
-        .fullscreen-button {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 1.2rem;
-            cursor: pointer;
-            margin-right: 20px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-        
-        .fullscreen-button:hover {
-            transform: scale(1.1);
-            color: var(--secondary);
-        }
-        
-        .fullscreen-button i {
-            vertical-align: middle;
-        }
 
-        .connection-status {
-            margin-right: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-        
-        .connection-status i {
-            margin-right: 5px;
-        }
-        
-        .connection-status.connected {
-            color: #27ae60; /* Hijau */
-        }
-        
-        .connection-status.disconnected {
-            color: #e74c3c; /* Merah */
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            .user-menu {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            
+            .dark-mode-button,
+            .connection-status,
+            .notification-bell,
+            .fullscreen-button {
+                margin-right: 15px;
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
@@ -307,6 +376,10 @@
             <div class="header">
                 <h1>BusCabin Monitor - Jetbus 3+ SHD OH 1626</h1>
                 <div class="user-menu">
+                    <button id="dark-mode-toggle" class="dark-mode-button" title="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
                     <div class="connection-status">
                         <i class="fas fa-wifi"></i>
                         <span class="connection-text">Connected</span>
@@ -317,7 +390,6 @@
                         <span class="notification-badge">3</span>
                     </div>
 
-                    <!-- Tombol Fullscreen Baru -->
                     <button id="fullscreen-btn" class="fullscreen-button" title="Toggle Fullscreen">
                         <i class="fas fa-expand"></i>
                     </button>
@@ -637,24 +709,6 @@
         function updateConnectionStatus() {
             const connectionStatus = document.querySelector('.connection-status');
             const connectionText = document.querySelector('.connection-text');
-            const isConnected = Math.random() > 0.3; // 70% connected, 30% disconnected
-            
-            if (isConnected) {
-                connectionStatus.classList.remove('disconnected');
-                connectionStatus.classList.add('connected');
-                connectionText.textContent = 'Connected';
-            } else {
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('disconnected');
-                connectionText.textContent = 'Disconnected';
-                // Tambahkan notifikasi saat disconnected
-                addNotification('Koneksi jaringan terputus', 'danger');
-            }
-        }
-
-        function updateConnectionStatus() {
-            const connectionStatus = document.querySelector('.connection-status');
-            const connectionText = document.querySelector('.connection-text');
             const wasConnected = connectionStatus.classList.contains('connected');
             const isConnected = Math.random() > 0.3;
             
@@ -697,7 +751,9 @@
             const defaultLat = -6.2088;
             const defaultLng = 106.8456;
             
-            const map = L.map('map').setView([defaultLat, defaultLng], 13);
+            const map = L.map('map', {
+                doubleClickZoom: false // Nonaktifkan zoom double-click
+            }).setView([defaultLat, defaultLng], 13);
             
             // Gray theme map tiles
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -757,14 +813,39 @@
                 fullscreenBtn.title = 'Enter Fullscreen';
             }
         }
-        
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // Fungsi toggle dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
             
-            document.addEventListener('fullscreenchange', updateFullscreenButton);
-        });
+            body.classList.toggle('dark-mode');
+            
+            // Simpan preferensi di localStorage
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            // Update icon
+            if (isDarkMode) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                darkModeToggle.title = 'Light Mode';
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                darkModeToggle.title = 'Dark Mode';
+            }
+        }
+
+        // Cek preferensi dark mode saat load
+        function checkDarkModePreference() {
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                darkModeToggle.title = 'Light Mode';
+            }
+        }
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
@@ -794,7 +875,8 @@
             // Set interval untuk update bagasi setiap 15 detik
             setInterval(updateBagasiStatus, 15000);
 
-            setInterval(updateConnectionStatus, 60000); // Update setiap 60 detik
+            // Set interval untuk update koneksi setiap 60 detik
+            setInterval(updateConnectionStatus, 60000);
             
             // Jalankan sekali saat pertama kali load
             updateWeather();
@@ -806,16 +888,20 @@
             // Initialize map
             initMap();
 
+            // Inisialisasi dark mode
+            checkDarkModePreference();
+            
+            // Event listener untuk tombol dark mode
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+
+            // Event listener untuk fullscreen
+            document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+
             // Nonaktifkan zoom double-click di seluruh halaman
             document.addEventListener('dblclick', function(e) {
                 e.preventDefault();
             }, { passive: false });
-            
-            // Atau khusus untuk map saja:
-            // document.getElementById('map').addEventListener('dblclick', function(e) {
-            //     e.preventDefault();
-            // }, { passive: false });
-
         });
     </script>
 </body>
